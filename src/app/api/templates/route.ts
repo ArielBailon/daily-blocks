@@ -24,6 +24,7 @@ export async function POST(request: Request) {
       const created = await tx.template.create({
         data: {
           name: parsed.data.name,
+          isDefault: parsed.data.isDefault,
           tasks: {
             create: parsed.data.tasks.map((task, index) => ({
               title: task.title,
@@ -33,6 +34,12 @@ export async function POST(request: Request) {
           },
         },
       });
+      if (parsed.data.isDefault) {
+        await tx.template.updateMany({
+          where: { isDefault: true, NOT: { id: created.id } },
+          data: { isDefault: false },
+        });
+      }
       for (const weekday of weekdays) {
         await tx.templateRecurrence.upsert({
           where: { weekday },

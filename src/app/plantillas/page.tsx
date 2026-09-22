@@ -53,7 +53,14 @@ export default async function PlantillasPage() {
                 className="flex items-center justify-between gap-4 border-b border-muted pb-3"
               >
                 <Link href={`/plantillas/${template.id}`} className="flex-1">
-                  <span className="block font-medium">{template.name}</span>
+                  <span className="block font-medium">
+                    {template.name}
+                    {template.isDefault ? (
+                      <span className="ml-2 text-xs text-accent">
+                        Predeterminada
+                      </span>
+                    ) : null}
+                  </span>
                   <span className="block text-sm text-foreground/70">
                     {template._count.tasks}{" "}
                     {template._count.tasks === 1 ? "tarea" : "tareas"}

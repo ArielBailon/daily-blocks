@@ -7,7 +7,7 @@
       lista ordenada de tareas (título + hora sugerida).
 - [x] 4. Recurrencia por día de semana — asignar una plantilla a uno o más
       días de la semana desde la UI de plantillas.
-- [ ] 5. Plantilla predeterminada — marcar una plantilla como default, usada
+- [x] 5. Plantilla predeterminada — marcar una plantilla como default, usada
       cuando el día no tiene recurrencia asignada.
 - [ ] 6. Generación automática del plan diario — al abrir "Hoy" sin plan
       existente para la fecha, se crea a partir de la plantilla que

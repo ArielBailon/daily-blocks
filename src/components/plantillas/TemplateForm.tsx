@@ -13,6 +13,7 @@ type TemplateFormProps =
       initialName: string;
       initialTasks: TaskRow[];
       initialWeekdays: number[];
+      initialIsDefault: boolean;
     };
 
 const WEEKDAYS = [
@@ -41,6 +42,9 @@ export function TemplateForm(props: TemplateFormProps) {
   );
   const [weekdays, setWeekdays] = useState<number[]>(
     props.mode === "edit" ? props.initialWeekdays : []
+  );
+  const [isDefault, setIsDefault] = useState(
+    props.mode === "edit" ? props.initialIsDefault : false
   );
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -88,6 +92,7 @@ export function TemplateForm(props: TemplateFormProps) {
           suggestedTime: task.suggestedTime,
         })),
       recurrence: weekdays,
+      isDefault,
     };
 
     try {
@@ -175,6 +180,16 @@ export function TemplateForm(props: TemplateFormProps) {
           })}
         </div>
       </div>
+
+      <label className="flex items-center gap-2 text-sm text-foreground/70">
+        <input
+          type="checkbox"
+          checked={isDefault}
+          onChange={(e) => setIsDefault(e.target.checked)}
+          className="accent-accent"
+        />
+        Plantilla predeterminada
+      </label>
 
       <div className="flex flex-col gap-3">
         <span className="text-sm text-foreground/70">Tareas</span>

@@ -39,9 +39,15 @@ export async function PUT(
   try {
     const weekdays = [...new Set(parsed.data.recurrence)];
     await prisma.$transaction(async (tx) => {
+      if (parsed.data.isDefault) {
+        await tx.template.updateMany({
+          where: { isDefault: true, NOT: { id } },
+          data: { isDefault: false },
+        });
+      }
       await tx.template.update({
         where: { id },
-        data: { name: parsed.data.name },
+        data: { name: parsed.data.name, isDefault: parsed.data.isDefault },
       });
       await tx.templateTask.deleteMany({ where: { templateId: id } });
       if (parsed.data.tasks.length > 0) {

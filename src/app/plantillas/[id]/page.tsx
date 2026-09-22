@@ -34,6 +34,7 @@ export default async function EditarPlantillaPage(
         suggestedTime: task.suggestedTime ?? "",
       }))}
       initialWeekdays={template.recurrences.map((r) => r.weekday)}
+      initialIsDefault={template.isDefault}
     />
   );
 }
