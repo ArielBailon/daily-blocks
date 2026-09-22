@@ -1,4 +1,4 @@
-- [ ] 1. Layout base y navegación — shell de la app con secciones "Hoy",
+- [x] 1. Layout base y navegación — shell de la app con secciones "Hoy",
       "Plantillas" e "Historial" navegables.
 - [ ] 2. Esquema de datos en Prisma — modelos Template, TemplateTask,
       TemplateRecurrence, DailyPlan y DailyTask migrados a PostgreSQL

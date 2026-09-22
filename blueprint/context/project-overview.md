@@ -1,6 +1,6 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash da634f0906fec68e355b05df13060a4cccab390f9af98efc4c6e29281f7f10bd -->
+<!-- blueprint:source-hash 15196beaf6d0719ad9eb48f8e5af636891e8b113b99b772a0f7c2027475eedd7 -->
 
 > A personal daily planner that generates a time-blocked checklist from
 > reusable templates, tracks completion, and keeps an immutable history of
