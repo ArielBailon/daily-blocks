@@ -51,7 +51,7 @@ at UTC midnight for the user's local calendar day (a small shared helper in
 `src/lib/`), and cover the boundary case. No schema change is needed.
 **Resolution:**
 
-### F-06 [P3] unverified - The generate step covers `npm run build` but not `npm run dev`
+### F-06 [P3] fixed - The generate step covers `npm run build` but not `npm run dev`
 
 **File:** package.json:7
 **Found:** 2026-09-22 by /audit (scope: current; lens: quality)
@@ -72,7 +72,17 @@ this delta; it is recorded so the narrower `prebuild` choice stays deliberate.
 matching `predev`. Prisma ORM 7 no longer generates on install, so the script
 has to be explicit either way. No new dependency is needed. Nothing is lost by
 deferring: the only current cost is one manual `npx prisma generate`.
-**Resolution:**
+**Resolution:** Feature 3 (Template CRUD) is exactly the predicted trigger -
+it wires `src/lib/prisma.ts` into Route Handlers and Server Components.
+Reproduced the break first: removed `src/generated/prisma`, ran a fresh dev
+server, and `GET /plantillas` failed with `Module not found: Can't resolve
+'@/generated/prisma/client'`. Replaced `"prebuild": "prisma generate"` with
+`"postinstall": "prisma generate"` in `package.json`, which npm runs after
+`npm install` regardless of whether `dev`, `build`, or nothing follows.
+Re-verified: removed the generated client again, ran `npm install` (which
+regenerated it via `postinstall`), then confirmed both `npm run dev` (`GET
+/plantillas` returns `200`) and `npm run build` succeed. Not yet closed - no
+review has looked at the fix.
 
 ### F-07 [P2] unverified - Nothing applies the migration on a production deploy
 

@@ -3,7 +3,7 @@
 - [x] 2. Esquema de datos en Prisma — modelos Template, TemplateTask,
       TemplateRecurrence, DailyPlan y DailyTask migrados a PostgreSQL
       (Prisma Postgres, vía Vercel Storage).
-- [ ] 3. CRUD de plantillas — crear, editar y eliminar una plantilla con su
+- [x] 3. CRUD de plantillas — crear, editar y eliminar una plantilla con su
       lista ordenada de tareas (título + hora sugerida).
 - [ ] 4. Recurrencia por día de semana — asignar una plantilla a uno o más
       días de la semana desde la UI de plantillas.
