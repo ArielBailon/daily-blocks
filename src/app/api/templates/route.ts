@@ -19,17 +19,28 @@ export async function POST(request: Request) {
   }
 
   try {
-    const template = await prisma.template.create({
-      data: {
-        name: parsed.data.name,
-        tasks: {
-          create: parsed.data.tasks.map((task, index) => ({
-            title: task.title,
-            suggestedTime: task.suggestedTime ?? null,
-            order: index,
-          })),
+    const weekdays = [...new Set(parsed.data.recurrence)];
+    const template = await prisma.$transaction(async (tx) => {
+      const created = await tx.template.create({
+        data: {
+          name: parsed.data.name,
+          tasks: {
+            create: parsed.data.tasks.map((task, index) => ({
+              title: task.title,
+              suggestedTime: task.suggestedTime ?? null,
+              order: index,
+            })),
+          },
         },
-      },
+      });
+      for (const weekday of weekdays) {
+        await tx.templateRecurrence.upsert({
+          where: { weekday },
+          update: { templateId: created.id },
+          create: { weekday, templateId: created.id },
+        });
+      }
+      return created;
     });
     return NextResponse.json({ id: template.id }, { status: 201 });
   } catch {

@@ -15,7 +15,10 @@ export default async function EditarPlantillaPage(
 
   const template = await prisma.template.findUnique({
     where: { id },
-    include: { tasks: { orderBy: { order: "asc" } } },
+    include: {
+      tasks: { orderBy: { order: "asc" } },
+      recurrences: true,
+    },
   });
   if (!template) {
     notFound();
@@ -30,6 +33,7 @@ export default async function EditarPlantillaPage(
         title: task.title,
         suggestedTime: task.suggestedTime ?? "",
       }))}
+      initialWeekdays={template.recurrences.map((r) => r.weekday)}
     />
   );
 }

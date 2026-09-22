@@ -15,6 +15,7 @@ const templateTaskInput = z.object({
 export const templateInput = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio").max(200),
   tasks: z.array(templateTaskInput),
+  recurrence: z.array(z.number().int().min(0).max(6)).max(7).default([]),
 });
 
 export type TemplateInput = z.infer<typeof templateInput>;

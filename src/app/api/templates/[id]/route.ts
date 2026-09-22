@@ -37,6 +37,7 @@ export async function PUT(
   }
 
   try {
+    const weekdays = [...new Set(parsed.data.recurrence)];
     await prisma.$transaction(async (tx) => {
       await tx.template.update({
         where: { id },
@@ -51,6 +52,16 @@ export async function PUT(
             suggestedTime: task.suggestedTime ?? null,
             order: index,
           })),
+        });
+      }
+      await tx.templateRecurrence.deleteMany({
+        where: { templateId: id, weekday: { notIn: weekdays } },
+      });
+      for (const weekday of weekdays) {
+        await tx.templateRecurrence.upsert({
+          where: { weekday },
+          update: { templateId: id },
+          create: { weekday, templateId: id },
         });
       }
     });

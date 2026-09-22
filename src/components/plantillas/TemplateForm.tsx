@@ -12,7 +12,18 @@ type TemplateFormProps =
       templateId: number;
       initialName: string;
       initialTasks: TaskRow[];
+      initialWeekdays: number[];
     };
+
+const WEEKDAYS = [
+  { value: 1, label: "Lun" },
+  { value: 2, label: "Mar" },
+  { value: 3, label: "Mié" },
+  { value: 4, label: "Jue" },
+  { value: 5, label: "Vie" },
+  { value: 6, label: "Sáb" },
+  { value: 0, label: "Dom" },
+];
 
 function emptyTask(): TaskRow {
   return { title: "", suggestedTime: "" };
@@ -28,9 +39,20 @@ export function TemplateForm(props: TemplateFormProps) {
       ? props.initialTasks
       : [emptyTask()]
   );
+  const [weekdays, setWeekdays] = useState<number[]>(
+    props.mode === "edit" ? props.initialWeekdays : []
+  );
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const errorRef = useRef<HTMLParagraphElement>(null);
+
+  function toggleWeekday(value: number) {
+    setWeekdays((days) =>
+      days.includes(value)
+        ? days.filter((day) => day !== value)
+        : [...days, value]
+    );
+  }
 
   function updateTask(index: number, patch: Partial<TaskRow>) {
     setTasks((rows) =>
@@ -65,6 +87,7 @@ export function TemplateForm(props: TemplateFormProps) {
           title: task.title,
           suggestedTime: task.suggestedTime,
         })),
+      recurrence: weekdays,
     };
 
     try {
@@ -127,6 +150,30 @@ export function TemplateForm(props: TemplateFormProps) {
           onChange={(e) => setName(e.target.value)}
           className="border-b border-muted bg-transparent py-1 outline-none focus:border-accent"
         />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className="text-sm text-foreground/70">Días de la semana</span>
+        <div className="flex flex-wrap gap-2">
+          {WEEKDAYS.map((day) => {
+            const selected = weekdays.includes(day.value);
+            return (
+              <button
+                key={day.value}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => toggleWeekday(day.value)}
+                className={`rounded border px-3 py-1 text-sm ${
+                  selected
+                    ? "border-accent bg-accent text-background"
+                    : "border-muted text-foreground/70"
+                }`}
+              >
+                {day.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">

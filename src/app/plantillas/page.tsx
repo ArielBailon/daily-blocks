@@ -4,10 +4,31 @@ import { DeleteTemplateButton } from "@/components/plantillas/DeleteTemplateButt
 
 export const dynamic = "force-dynamic";
 
+const WEEKDAY_LABELS: Record<number, string> = {
+  1: "Lun",
+  2: "Mar",
+  3: "Mié",
+  4: "Jue",
+  5: "Vie",
+  6: "Sáb",
+  0: "Dom",
+};
+const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+
+function formatWeekdays(weekdays: number[]): string {
+  const present = new Set(weekdays);
+  return WEEKDAY_ORDER.filter((day) => present.has(day))
+    .map((day) => WEEKDAY_LABELS[day])
+    .join(", ");
+}
+
 export default async function PlantillasPage() {
   const templates = await prisma.template.findMany({
     orderBy: { createdAt: "asc" },
-    include: { _count: { select: { tasks: true } } },
+    include: {
+      _count: { select: { tasks: true } },
+      recurrences: { select: { weekday: true } },
+    },
   });
 
   return (
@@ -36,6 +57,11 @@ export default async function PlantillasPage() {
                   <span className="block text-sm text-foreground/70">
                     {template._count.tasks}{" "}
                     {template._count.tasks === 1 ? "tarea" : "tareas"}
+                    {template.recurrences.length > 0
+                      ? ` · ${formatWeekdays(
+                          template.recurrences.map((r) => r.weekday)
+                        )}`
+                      : ""}
                   </span>
                 </Link>
                 <DeleteTemplateButton id={template.id} name={template.name} />

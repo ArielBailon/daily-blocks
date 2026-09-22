@@ -5,7 +5,7 @@
       (Prisma Postgres, vía Vercel Storage).
 - [x] 3. CRUD de plantillas — crear, editar y eliminar una plantilla con su
       lista ordenada de tareas (título + hora sugerida).
-- [ ] 4. Recurrencia por día de semana — asignar una plantilla a uno o más
+- [x] 4. Recurrencia por día de semana — asignar una plantilla a uno o más
       días de la semana desde la UI de plantillas.
 - [ ] 5. Plantilla predeterminada — marcar una plantilla como default, usada
       cuando el día no tiene recurrencia asignada.
