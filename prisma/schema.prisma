@@ -11,3 +11,48 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Template {
+  id          Int                  @id @default(autoincrement())
+  name        String
+  isDefault   Boolean              @default(false)
+  createdAt   DateTime             @default(now())
+  tasks       TemplateTask[]
+  recurrences TemplateRecurrence[]
+  dailyPlans  DailyPlan[]
+}
+
+model TemplateTask {
+  id            Int      @id @default(autoincrement())
+  templateId    Int
+  template      Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  title         String
+  suggestedTime String?
+  order         Int
+}
+
+model TemplateRecurrence {
+  weekday    Int      @id
+  templateId Int
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+}
+
+model DailyPlan {
+  id         Int         @id @default(autoincrement())
+  date       DateTime    @unique @db.Date
+  templateId Int?
+  template   Template?   @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  closed     Boolean     @default(false)
+  tasks      DailyTask[]
+}
+
+model DailyTask {
+  id            Int       @id @default(autoincrement())
+  dailyPlanId   Int
+  dailyPlan     DailyPlan @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
+  title         String
+  suggestedTime String?
+  completed     Boolean   @default(false)
+  completedAt   DateTime?
+  order         Int
+}

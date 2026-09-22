@@ -71,8 +71,8 @@ supports keeping it filled with the right tasks and preserving its history.
 ### TemplateRecurrence
 
 - `templateId` - FK -> Template
-- `weekday` (int, 0-6)
-- many-to-many join between Template and weekdays
+- `weekday` (int, 0-6) - primary key, so each weekday maps to at most one
+  template
 
 ### DailyPlan
 
