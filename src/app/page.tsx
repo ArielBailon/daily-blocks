@@ -1,5 +1,6 @@
 import { closePastPlans, getDayPlan } from "@/lib/daily-plan";
-import { resolveToday, toDateKey } from "@/lib/date";
+import { redirect } from "next/navigation";
+import { parseDateKey, resolveToday, toDateKey } from "@/lib/date";
 import { GenerateDayForm } from "@/components/hoy/GenerateDayForm";
 import { BlockRow } from "@/components/hoy/BlockRow";
 
@@ -8,12 +9,28 @@ export const dynamic = "force-dynamic";
 const DEFAULT_START = "07:30";
 const DEFAULT_END = "18:00";
 
-export default async function HoyPage() {
-  const { date } = resolveToday();
-  await closePastPlans(date);
+export default async function HoyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ fecha?: string | string[] }>;
+}) {
+  const { fecha } = await searchParams;
+  const { date: today } = resolveToday();
+  let date = today;
+  if (fecha !== undefined) {
+    const parsed = typeof fecha === "string" ? parseDateKey(fecha) : null;
+    // "/" is the only URL for today; past days belong to history.
+    if (!parsed || parsed.getTime() <= today.getTime()) {
+      redirect("/");
+    }
+    date = parsed;
+  }
+
+  await closePastPlans(today);
   const plan = await getDayPlan(date);
   const blocks = plan?.blocks ?? [];
   const dateKey = toDateKey(date);
+  const isFuture = date.getTime() > today.getTime();
 
   return (
     <main className="flex flex-1 flex-col px-4 py-10 sm:px-6">
@@ -27,7 +44,10 @@ export default async function HoyPage() {
         </header>
 
         <GenerateDayForm
+          key={dateKey}
           dateKey={dateKey}
+          todayKey={toDateKey(today)}
+          hasBlocks={blocks.length > 0}
           initialStart={plan?.startTime ?? DEFAULT_START}
           initialEnd={plan?.endTime ?? DEFAULT_END}
         />
@@ -48,6 +68,7 @@ export default async function HoyPage() {
                   startTime={block.startTime}
                   initialActivity={block.activity}
                   initialCompleted={block.completed}
+                  canComplete={!isFuture}
                 />
               ))}
             </ol>

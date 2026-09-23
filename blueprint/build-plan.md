@@ -27,7 +27,7 @@
       fin (por defecto 07:30–18:00) y un registro de "tareas varias" (lista de
       texto); nuevo modelo de bloque (hora de inicio, actividad, completado).
       Migración aditiva, sin tocar lo existente.
-- [ ] 13. Planificación por bloques en "Hoy" — elegir fecha (hoy o futura),
+- [x] 13. Planificación por bloques en "Hoy" — elegir fecha (hoy o futura),
       inicio y fin (solo :00/:30); "Generar día" crea los bloques de 30 min
       conservando lo ya escrito (pide confirmación antes de borrar bloques
       con texto que quedan fuera del rango); "Vaciar" limpia el día con
@@ -41,7 +41,7 @@
           Se quita la lista de tareas anterior de Hoy.
     - [x] 13b. Editar bloques — escribir la actividad de cada bloque y marcar
           su checkbox, con guardado automático.
-    - [ ] 13c. Fecha y Vaciar — elegir hoy o un día futuro (fecha en la URL,
+    - [x] 13c. Fecha y Vaciar — elegir hoy o un día futuro (fecha en la URL,
           `/` siempre abre hoy), checkbox deshabilitado en días futuros y
           "Vaciar" con confirmación.
 - [ ] 14. Tareas varias — panel lateral para anotar tareas del día como lista

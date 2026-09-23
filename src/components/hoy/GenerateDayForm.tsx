@@ -8,10 +8,14 @@ const FIELD_CLASS =
 
 export function GenerateDayForm({
   dateKey,
+  todayKey,
+  hasBlocks,
   initialStart,
   initialEnd,
 }: {
   dateKey: string;
+  todayKey: string;
+  hasBlocks: boolean;
   initialStart: string;
   initialEnd: string;
 }) {
@@ -19,7 +23,7 @@ export function GenerateDayForm({
   const [startTime, setStartTime] = useState(initialStart);
   const [endTime, setEndTime] = useState(initialEnd);
   const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState<"generate" | "clear" | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
 
   function showError(message: string) {
@@ -51,19 +55,65 @@ export function GenerateDayForm({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
-    setPending(true);
+    setPending("generate");
     try {
       await generate(false);
     } catch {
       showError("Error al generar el día");
     } finally {
-      setPending(false);
+      setPending(null);
     }
+  }
+
+  async function handleClear() {
+    if (!window.confirm("¿Vaciar este día? Se borrarán todos sus bloques.")) {
+      return;
+    }
+    setError(null);
+    setPending("clear");
+    try {
+      const res = await fetch(`/api/days/${dateKey}/blocks`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        router.refresh();
+        return;
+      }
+      const body = await res.json().catch(() => null);
+      showError(body?.error ?? "Error al vaciar el día");
+    } catch {
+      showError("Error al vaciar el día");
+    } finally {
+      setPending(null);
+    }
+  }
+
+  function handleDateChange(value: string) {
+    // YYYY-MM-DD strings compare in calendar order; empty or past values are ignored.
+    if (value === "" || value < todayKey) return;
+    router.push(value === todayKey ? "/" : `/?fecha=${value}`);
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <div className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-col gap-1">
+          <label
+            htmlFor="day-date"
+            className="text-xs uppercase tracking-wide text-foreground/60"
+          >
+            Fecha
+          </label>
+          <input
+            id="day-date"
+            type="date"
+            required
+            min={todayKey}
+            value={dateKey}
+            onChange={(e) => handleDateChange(e.target.value)}
+            className={FIELD_CLASS}
+          />
+        </div>
         <div className="flex flex-col gap-1">
           <label
             htmlFor="day-start"
@@ -100,10 +150,18 @@ export function GenerateDayForm({
         </div>
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending !== null}
           className="rounded-lg bg-accent px-5 py-2 text-accent-foreground transition-colors enabled:hover:bg-accent/85 disabled:opacity-50"
         >
-          {pending ? "Generando…" : "Generar día"}
+          {pending === "generate" ? "Generando…" : "Generar día"}
+        </button>
+        <button
+          type="button"
+          onClick={handleClear}
+          disabled={!hasBlocks || pending !== null}
+          className="rounded-lg border border-muted px-5 py-2 transition-colors enabled:hover:border-accent disabled:opacity-50"
+        >
+          {pending === "clear" ? "Vaciando…" : "Vaciar"}
         </button>
       </div>
       {error && (

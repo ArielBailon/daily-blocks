@@ -13,9 +13,9 @@ export async function PATCH(
     return NextResponse.json({ error: "Fecha inválida" }, { status: 400 });
   }
   const { date: today } = resolveToday();
-  if (date.getTime() !== today.getTime()) {
+  if (date.getTime() < today.getTime()) {
     return NextResponse.json(
-      { error: "Solo se puede editar el día de hoy" },
+      { error: "Solo se puede planificar hoy o un día futuro" },
       { status: 400 }
     );
   }
@@ -44,6 +44,12 @@ export async function PATCH(
   }
 
   const { activity, completed } = parsed.data;
+  if (completed !== undefined && date.getTime() > today.getTime()) {
+    return NextResponse.json(
+      { error: "Solo se pueden marcar bloques de hoy" },
+      { status: 400 }
+    );
+  }
   const data = {
     ...(activity !== undefined && { activity }),
     ...(completed !== undefined && { completed }),

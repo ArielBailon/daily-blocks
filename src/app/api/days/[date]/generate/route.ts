@@ -13,9 +13,9 @@ export async function POST(
     return NextResponse.json({ error: "Fecha inválida" }, { status: 400 });
   }
   const { date: today } = resolveToday();
-  if (date.getTime() !== today.getTime()) {
+  if (date.getTime() < today.getTime()) {
     return NextResponse.json(
-      { error: "Solo se puede generar el día de hoy" },
+      { error: "Solo se puede planificar hoy o un día futuro" },
       { status: 400 }
     );
   }

@@ -13,12 +13,14 @@ export function BlockRow({
   startTime,
   initialActivity,
   initialCompleted,
+  canComplete,
 }: {
   dateKey: string;
   id: number;
   startTime: string;
   initialActivity: string;
   initialCompleted: boolean;
+  canComplete: boolean;
 }) {
   const [activity, setActivity] = useState(initialActivity);
   const [completed, setCompleted] = useState(initialCompleted);
@@ -149,13 +151,18 @@ export function BlockRow({
             completed ? "text-foreground/50 line-through" : ""
           }`}
         />
-        <label className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center">
+        <label
+          className={`flex h-12 w-12 shrink-0 items-center justify-center ${
+            canComplete ? "cursor-pointer" : "cursor-not-allowed"
+          }`}
+        >
           <input
             type="checkbox"
             checked={completed}
             aria-label={`Completado ${startTime}`}
+            disabled={!canComplete}
             onChange={(e) => handleCompletedChange(e.target.checked)}
-            className="h-4 w-4 cursor-pointer accent-accent"
+            className="h-4 w-4 cursor-pointer accent-accent disabled:cursor-not-allowed disabled:opacity-40"
           />
         </label>
       </div>
