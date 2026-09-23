@@ -23,7 +23,7 @@
       completadas por día.
 - [x] 11. Tema oscuro global — paleta oscura (fondo casi negro, tarjetas con
       borde sutil, acento terracota), títulos serif y texto sans en toda la app.
-- [ ] 12. Modelo del día por bloques — el plan del día guarda hora de inicio y
+- [x] 12. Modelo del día por bloques — el plan del día guarda hora de inicio y
       fin (por defecto 07:30–18:00) y un registro de "tareas varias" (lista de
       texto); nuevo modelo de bloque (hora de inicio, actividad, completado).
       Migración aditiva, sin tocar lo existente.

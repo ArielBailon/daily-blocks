@@ -43,7 +43,22 @@ model DailyPlan {
   templateId Int?
   template   Template?   @relation(fields: [templateId], references: [id], onDelete: SetNull)
   closed     Boolean     @default(false)
+  startTime  String      @default("07:30")
+  endTime    String      @default("18:00")
+  miscTasks  String[]    @default([])
   tasks      DailyTask[]
+  blocks     Block[]
+}
+
+model Block {
+  id          Int       @id @default(autoincrement())
+  dailyPlanId Int
+  dailyPlan   DailyPlan @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
+  startTime   String
+  activity    String    @default("")
+  completed   Boolean   @default(false)
+
+  @@unique([dailyPlanId, startTime])
 }
 
 model DailyTask {
