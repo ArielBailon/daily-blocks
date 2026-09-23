@@ -1,7 +1,7 @@
 import { closePastPlans, getDayPlan } from "@/lib/daily-plan";
 import { resolveToday, toDateKey } from "@/lib/date";
-import { isOnTheHour } from "@/lib/blocks";
 import { GenerateDayForm } from "@/components/hoy/GenerateDayForm";
+import { BlockRow } from "@/components/hoy/BlockRow";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +13,7 @@ export default async function HoyPage() {
   await closePastPlans(date);
   const plan = await getDayPlan(date);
   const blocks = plan?.blocks ?? [];
+  const dateKey = toDateKey(date);
 
   return (
     <main className="flex flex-1 flex-col px-4 py-10 sm:px-6">
@@ -26,7 +27,7 @@ export default async function HoyPage() {
         </header>
 
         <GenerateDayForm
-          dateKey={toDateKey(date)}
+          dateKey={dateKey}
           initialStart={plan?.startTime ?? DEFAULT_START}
           initialEnd={plan?.endTime ?? DEFAULT_END}
         />
@@ -40,27 +41,24 @@ export default async function HoyPage() {
           ) : (
             <ol>
               {blocks.map((block) => (
-                <li
+                <BlockRow
                   key={block.id}
-                  className="flex border-b border-muted last:border-b-0"
-                >
-                  <span
-                    className={`w-20 shrink-0 border-r border-muted px-3 py-3 text-right text-sm tabular-nums ${
-                      isOnTheHour(block.startTime)
-                        ? "font-semibold text-foreground"
-                        : "text-foreground/60"
-                    }`}
-                  >
-                    {block.startTime}
-                  </span>
-                  <div className="min-h-12 min-w-0 flex-1 px-3 py-3">
-                    {block.activity}
-                  </div>
-                </li>
+                  dateKey={dateKey}
+                  id={block.id}
+                  startTime={block.startTime}
+                  initialActivity={block.activity}
+                  initialCompleted={block.completed}
+                />
               ))}
             </ol>
           )}
         </div>
+
+        {blocks.length > 0 && (
+          <p className="text-center text-sm text-foreground/60">
+            Se guarda automáticamente.
+          </p>
+        )}
       </div>
     </main>
   );

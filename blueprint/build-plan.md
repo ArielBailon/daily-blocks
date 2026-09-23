@@ -39,7 +39,7 @@
           los bloques conservando lo escrito; confirma antes de borrar
           bloques con texto fuera del rango) y la grilla con horas en 24 h.
           Se quita la lista de tareas anterior de Hoy.
-    - [ ] 13b. Editar bloques — escribir la actividad de cada bloque y marcar
+    - [x] 13b. Editar bloques — escribir la actividad de cada bloque y marcar
           su checkbox, con guardado automático.
     - [ ] 13c. Fecha y Vaciar — elegir hoy o un día futuro (fecha en la URL,
           `/` siempre abre hoy), checkbox deshabilitado en días futuros y
