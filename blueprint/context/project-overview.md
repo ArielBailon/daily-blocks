@@ -1,134 +1,134 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash 15196beaf6d0719ad9eb48f8e5af636891e8b113b99b772a0f7c2027475eedd7 -->
+<!-- blueprint:source-hash efd9c96eb9c693226f9c18188237decfb5bd037628156a71ae7416aa7fa4ebff -->
 
-> A personal daily planner that generates a time-blocked checklist from
-> reusable templates, tracks completion, and keeps an immutable history of
-> each day.
+> A personal day planner that splits the day into 30-minute blocks, each with
+> a free-text activity and a completion checkbox, plus a small log of misc
+> tasks, and keeps an immutable, browsable history of each day.
 
 ## Problem
 
 Manually rewriting a Deep-Work-style time-block schedule every day is
-repetitive, since most workdays repeat the same structure. There's no way to
-reuse a day's task layout across similar days, and no record of how much of
-the plan actually got done.
+repetitive, and there's no record of how much of each day's plan actually got
+done.
 
 ## Users
 
 Personal use only (Ariel). Single user, no multi-tenancy, no roles or
-accounts.
-
-## Usage model
-
-Single-user, no authentication. No multi-tenant, hostile-user, or compliance
-requirements. Free-tier Postgres (Prisma Postgres, via Vercel Storage) is sufficient for
-scale. Accessed from both desktop and mobile browsers via the deployed URL,
-with mobile as the primary usage surface for the daily view.
+accounts, no authentication. Used from desktop and mobile browsers through the
+deployed URL; mobile is the primary surface for the daily view.
 
 ## Features
 
-The headline feature is the "Hoy" (Today) checklist view — everything else
-supports keeping it filled with the right tasks and preserving its history.
+Features 1-10 are built (the original template-based checklist). Features
+11-16 move the app to the block planner and then retire the template model.
+The headline is **"Hoy" as block planning (13)**.
 
-1. **Layout and navigation** - app shell with "Hoy," "Plantillas," and
-   "Historial" sections.
+1. **Layout and navigation** - app shell with "Hoy", "Plantillas", "Historial".
 2. **Prisma data schema** - Template, TemplateTask, TemplateRecurrence,
-   DailyPlan, DailyTask models migrated to Postgres.
-3. **Template CRUD** - create, edit, and delete a template with its ordered
-   task list (title + optional suggested time).
-4. **Weekday recurrence** - assign a template to one or more days of the
-   week.
-5. **Default template** - mark one template as default for days with no
-   recurrence assigned.
-6. **Automatic daily plan generation** - opening "Hoy" with no plan for the
-   date creates one from the matching template (recurring or default).
-7. **"Hoy" checklist view** - **(headline)** list today's tasks with
-   checkboxes; toggling completed/pending saves immediately.
-8. **Day close-out** - snapshot the day's final task state when the day ends
-   (or the date changes); a closed day can't be edited.
-9. **Manual edit of today's plan** - add or remove a one-off task from
-   today's plan without changing the template it came from.
-10. **History view** - list of past days with % of tasks completed per day.
+   DailyPlan, DailyTask on Postgres.
+3. **Template CRUD** - templates with an ordered task list.
+4. **Weekday recurrence** - assign a template to weekdays.
+5. **Default template** - used when a day has no recurrence.
+6. **Automatic daily plan generation** - "Hoy" creates the day's plan from the
+   matching template.
+7. **"Hoy" checklist view** - tasks with checkboxes, saved immediately.
+8. **Day close-out** - past days become an immutable snapshot and can't be
+   edited. *Still applies to the new model.*
+9. **Manual edit of today's plan** - add/remove a one-off task.
+10. **History view** - past days with % completed. *Replaced by 15.*
+11. **Global dark theme** - near-black background, cards with a subtle border,
+    terracotta accent; serif headings, sans body text, across the whole app.
+12. **Block day model** - `DailyPlan` gains start/end time and a misc-tasks
+    list; new `Block` model. Additive migration; existing data untouched.
+13. **Block planning in "Hoy"** *(headline)* - pick the date (today or future)
+    and start/end (only `:00`/`:30`, default 07:30-18:00). "Generar día"
+    builds the 30-minute blocks while keeping what's already written, and asks
+    for confirmation before deleting blocks with text that fall outside the
+    new range. "Vaciar" clears the day after confirmation. Each block has a
+    free-text activity and a completion checkbox, auto-saved. On future days
+    the checkbox is disabled.
+14. **Tareas varias** - side panel to log the day's small tasks as a text
+    list (add/remove), auto-saved, no checkbox.
+15. **History by date** - pick a past date and see its blocks, checks, and
+    misc tasks read-only.
+16. **Retire templates and the old model** - remove the Plantillas section,
+    its routes, and template-based generation; drop Template, TemplateTask,
+    TemplateRecurrence, and DailyTask with their data.
 
 ## Data model
 
-### Template
-
-- `id` - primary key
-- `name` (string)
-- `isDefault` (bool) - used when a day has no matching recurrence
-- `createdAt` (datetime)
-- has many `TemplateTask`, `TemplateRecurrence`
-
-### TemplateTask
-
-- `id` - primary key
-- `templateId` - FK -> Template
-- `title` (string)
-- `suggestedTime` (string/time, optional)
-- `order` (int)
-
-### TemplateRecurrence
-
-- `templateId` - FK -> Template
-- `weekday` (int, 0-6) - primary key, so each weekday maps to at most one
-  template
+Target model once 16 lands. Until then the legacy models below still exist.
 
 ### DailyPlan
 
-- `id` - primary key
+- `id` (int) - primary key
 - `date` (date, unique) - one plan per calendar day
-- `templateId` - FK -> Template, nullable (null when manually edited without
-  a template)
-- `closed` (bool) - true once the day's snapshot is final and immutable
-- has many `DailyTask`
+- `closed` (bool, default false) - true once the day is past; closed days are
+  read-only
+- `startTime` (string `HH:MM`, default `"07:30"`) - start of the day's range
+- `endTime` (string `HH:MM`, default `"18:00"`) - end of the day's range
+  (exclusive; blocks cover `[startTime, endTime)` in 30-minute steps)
+- `miscTasks` (string list, default empty) - the "Tareas varias" log, in
+  insertion order
+- has many `Block`
+- legacy until 16: `templateId` (nullable FK -> Template), has many
+  `DailyTask`
 
-### DailyTask
+### Block
 
-- `id` - primary key
-- `dailyPlanId` - FK -> DailyPlan
-- `title` (string)
-- `suggestedTime` (string/time, optional)
-- `completed` (bool)
-- `completedAt` (datetime, optional)
-- `order` (int)
+- `id` (int) - primary key
+- `dailyPlanId` (int) - FK -> DailyPlan, cascade on delete
+- `startTime` (string `HH:MM`) - start of the 30-minute block; unique per
+  `dailyPlanId`
+- `activity` (string, may be empty) - free-text activity
+- `completed` (bool, default false) - whether the block was done
 
-> `DailyPlan`/`DailyTask` are the historical source of truth once `closed` is
-> true - later features (history, close-out) depend on this snapshot being
-> immutable.
+### Legacy (removed in 16)
+
+- `Template` (name, isDefault, createdAt), `TemplateTask` (title, optional
+  suggestedTime, order), `TemplateRecurrence` (weekday 0-6 as primary key ->
+  template), `DailyTask` (title, suggestedTime, completed, completedAt, order).
+  Their data is deleted, not migrated.
+
+> `DailyPlan` and `Block` are the day's source of truth. Once `closed` is
+> true they are an immutable snapshot that history (15) reads.
 
 ## Tech stack
 
 - **Next.js (App Router, TypeScript, Tailwind, `src/`)** - frontend and app
   shell.
-- **Next.js Route Handlers (`src/app/api/**`)** - backend, in the same
-  project; no separate service.
+- **Next.js Route Handlers (`src/app/api/**`)** - backend in the same project.
 - **Prisma** - ORM for all database access.
-- **PostgreSQL on Prisma Postgres, free tier** - provisioned from the Vercel
-  Storage dashboard; reachable from desktop and mobile without a self-hosted
-  server.
+- **PostgreSQL on Prisma Postgres, free tier** - provisioned from Vercel
+  Storage; reachable from desktop and mobile.
 
 ## Monetization
 
-Not applicable — personal-use tool.
+Not applicable - personal-use tool.
 
 ## UI/UX
 
-Minimalist, serif typography, warm/earth tones (cream/earth), no dashboards
-or unnecessary configuration. Must work well on a narrow mobile viewport
-without compromising the daily view, since phone is the primary usage
-surface.
+Minimalist. Dark theme across the whole app: near-black background, cards
+with a subtle border, terracotta accent, serif headings, sans body text. Must
+work well on a narrow mobile viewport.
 
-- `/` (Hoy) - today's checklist, generated from the matching template.
-- `/plantillas` - template CRUD, recurrence assignment, default toggle.
-- `/historial` - list of past days with completion percentage.
+Design reference: `blueprint/reference/planificacion-por-bloques.png`.
+
+- `/` (Hoy) - title and short description; a form with date, start, and end,
+  plus "Generar día" and "Vaciar"; a grid with one row per block: 24-hour time
+  (on-the-hour bold, half-hours muted), the activity, and a completion
+  checkbox; a "Tareas varias" side panel with "+ Añadir tarea"; a footer
+  saying "Se guarda automáticamente".
+- `/historial` - pick a past date and see that day read-only.
+- Navigation: Hoy and Historial. Plantillas is removed in 16.
 
 ## Deployment
 
 - **Host:** Vercel.
-- **Database:** Prisma Postgres, free tier, provisioned via Vercel Storage, connected via `DATABASE_URL`.
+- **Database:** Prisma Postgres, free tier, via Vercel Storage, connected with
+  `DATABASE_URL`.
 - **Env vars:** `DATABASE_URL`.
-- Accessible from both desktop and mobile via the deployed public URL.
 
-> TODO: build/start commands, health checks, and domain are not yet decided
-> beyond the Vercel default; revisit in `/release`.
+> TODO: build/start commands, migration step on deploy, health checks, and
+> domain are not decided; revisit in `/release`.

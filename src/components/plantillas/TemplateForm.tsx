@@ -170,7 +170,7 @@ export function TemplateForm(props: TemplateFormProps) {
                 onClick={() => toggleWeekday(day.value)}
                 className={`rounded border px-3 py-1 text-sm transition-colors ${
                   selected
-                    ? "border-accent bg-accent text-background hover:bg-accent/85"
+                    ? "border-accent bg-accent text-accent-foreground hover:bg-accent/85"
                     : "border-muted text-foreground/70 hover:border-accent hover:text-accent"
                 }`}
               >
@@ -270,7 +270,7 @@ export function TemplateForm(props: TemplateFormProps) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded bg-accent px-4 py-2 text-background transition-colors enabled:hover:bg-accent/85 disabled:opacity-50"
+        className="self-start rounded bg-accent px-4 py-2 text-accent-foreground transition-colors enabled:hover:bg-accent/85 disabled:opacity-50"
       >
         {pending ? "Guardando…" : "Guardar"}
       </button>

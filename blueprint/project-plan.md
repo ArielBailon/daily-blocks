@@ -1,38 +1,38 @@
 ## 1. Problema
 Mantener un sistema manual de planificación por bloques de tiempo (estilo *Deep
-Work*) requiere reescribir a mano la estructura del día todos los días, incluso
-cuando la mayoría de los días laborales se repiten. No hay forma de ver el
-historial de cumplimiento ni de reutilizar un mismo esquema de tareas entre días
-similares.
+Work*) requiere reescribir a mano la estructura del día todos los días. No hay
+forma de registrar qué bloques se cumplieron ni de consultar después cómo fue
+cada día.
 
 ## 2. Usuarios
 Uso personal (Ariel). Un solo usuario, sin multi-tenancy ni roles por ahora.
 
 ## 3. Funcionalidades (MVP)
-- Vista "Hoy": lista de tareas del día con checkbox, generada automáticamente a
-  partir de la plantilla que corresponde (por recurrencia o por defecto).
-- Marcar una tarea como completada/pendiente con guardado automático inmediato.
-- Cierre de día: al terminar el día (o al entrar al día siguiente), el estado
-  final de las tareas de ese día queda guardado como snapshot histórico
-  inmutable.
-- CRUD de plantillas: cada plantilla es una lista ordenada de tareas
-  (título + hora sugerida opcional).
-- Asignar una plantilla a uno o más días de la semana (recurrencia).
-- Marcar una plantilla como predeterminada, usada en días sin recurrencia
-  configurada.
-- Editar el plan del día actual manualmente (agregar/quitar una tarea puntual
-  sin modificar la plantilla original).
-- Historial: lista de días pasados con % de tareas completadas por día.
+- Vista "Hoy" como planificación por bloques: elegir la fecha (hoy o una
+  futura, por defecto hoy) y el rango del día (inicio y fin, solo :00 o :30,
+  por defecto 07:30 a 18:00). "Generar día" crea bloques de 30 minutos
+  conservando lo ya escrito; pide confirmación antes de borrar bloques con
+  texto que quedan fuera del rango. "Vaciar" limpia el día tras confirmar.
+- Cada bloque tiene una actividad de texto libre y un checkbox para marcar si
+  se completó, con guardado automático. En días futuros el checkbox está
+  deshabilitado hasta que llegue el día.
+- "Tareas varias": registro de texto del día (añadir y quitar tareas
+  pequeñas), sin checkbox, con guardado automático.
+- Cierre de día: al terminar el día (o al entrar al día siguiente), el día
+  queda como snapshot inmutable; los días pasados no se pueden editar.
+- Historial: elegir una fecha pasada y ver sus bloques, checks y tareas
+  varias en solo lectura.
+- Se retiran las plantillas (con su recurrencia y predeterminada) y la lista
+  de tareas anterior de Hoy.
 
 ## 4. Datos
-- **Template**: id, nombre, isDefault (bool), createdAt.
-- **TemplateTask**: id, templateId, título, hora sugerida (opcional), orden.
-- **TemplateRecurrence**: templateId, diaSemana (0-6). Relación N a N entre
-  Template y días de la semana.
-- **DailyPlan**: id, fecha (única por día), templateId usado (nullable si fue
-  editado manualmente sin plantilla), cerrado (bool).
-- **DailyTask**: id, dailyPlanId, título, hora sugerida, completado (bool),
-  completedAt, orden.
+- **DailyPlan**: id, fecha (única por día), cerrado (bool), hora de inicio y
+  hora de fin (HH:MM; por defecto 07:30 y 18:00), tareas varias (lista
+  ordenada de textos, vacía por defecto).
+- **Block**: id, dailyPlanId, hora de inicio (HH:MM, única dentro de su día),
+  actividad (texto, puede estar vacía), completado (bool).
+- Se eliminan Template, TemplateTask, TemplateRecurrence y DailyTask, con sus
+  datos.
 
 ## 5. Stack
 - Next.js (App Router, TypeScript, Tailwind, carpeta `src/`).
@@ -46,12 +46,15 @@ Uso personal (Ariel). Un solo usuario, sin multi-tenancy ni roles por ahora.
 No aplica — herramienta de uso personal.
 
 ## 7. UI/UX
-Minimalista, sin componentes ni pantallas de más. Una sola vista principal
-("Hoy") con checklist de tareas, y dos vistas secundarias simples
-(plantillas, historial). Tipografía serif, tonos cálidos (crema/tierra),
-sin dashboards ni configuraciones innecesarias. Debe verse bien en móvil
-(viewport angosto) sin sacrificar la vista diaria — es el uso principal
-desde el celular.
+Minimalista, sin componentes ni pantallas de más. Tema oscuro en toda la app
+(fondo casi negro, tarjetas con borde sutil, acento terracota), títulos serif
+y texto sans. Navegación: Hoy e Historial. Hoy replica la referencia
+`blueprint/reference/planificacion-por-bloques.png`: formulario de fecha,
+inicio y fin con "Generar día" y "Vaciar"; grilla de bloques con la hora en
+24 h (las en punto en negrita, las medias atenuadas), la actividad y un
+checkbox por fila; panel lateral "Tareas varias"; pie "Se guarda
+automáticamente". Debe verse bien en móvil (viewport angosto) — es el uso
+principal desde el celular.
 
 ## 8. Despliegue
 Vercel, con Prisma Postgres (provisionado desde el dashboard de Vercel) como

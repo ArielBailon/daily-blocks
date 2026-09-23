@@ -1,23 +1,38 @@
 @import "tailwindcss";
 
+/* Dark palette sampled from blueprint/reference/planificacion-por-bloques.png. */
 :root {
-  --background: #faf6ef;
-  --foreground: #3d2f22;
-  --muted: #c9b8a0;
-  --accent: #b3583d;
+  color-scheme: dark;
+  --background: #171512;
+  --surface: #1c1a16;
+  --foreground: #ece7e0;
+  --muted: #34302a;
+  --accent: #e08654;
+  /* Dark text on accent fills: white on this orange is only ~2.7:1. */
+  --accent-foreground: #1a1410;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --font-sans: var(--font-serif);
+  --color-accent-foreground: var(--accent-foreground);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Body text uses the default sans stack; headings use Lora (next/font --font-serif). */
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif), Georgia, serif;
+  }
 }
 
 /* Tailwind v4 preflight resets buttons to cursor: default. */

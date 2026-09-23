@@ -90,7 +90,7 @@ export function AddDailyTaskForm() {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded bg-accent px-4 py-2 text-sm text-background transition-colors enabled:hover:bg-accent/85 disabled:opacity-50"
+        className="self-start rounded bg-accent px-4 py-2 text-sm text-accent-foreground transition-colors enabled:hover:bg-accent/85 disabled:opacity-50"
       >
         {pending ? "Añadiendo…" : "Añadir"}
       </button>

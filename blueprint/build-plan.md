@@ -21,3 +21,23 @@
       del plan de hoy sin modificar la plantilla original.
 - [x] 10. Vista de historial — lista de días pasados con % de tareas
       completadas por día.
+- [x] 11. Tema oscuro global — paleta oscura (fondo casi negro, tarjetas con
+      borde sutil, acento terracota), títulos serif y texto sans en toda la app.
+- [ ] 12. Modelo del día por bloques — el plan del día guarda hora de inicio y
+      fin (por defecto 07:30–18:00) y un registro de "tareas varias" (lista de
+      texto); nuevo modelo de bloque (hora de inicio, actividad, completado).
+      Migración aditiva, sin tocar lo existente.
+- [ ] 13. Planificación por bloques en "Hoy" — elegir fecha (hoy o futura),
+      inicio y fin (solo :00/:30); "Generar día" crea los bloques de 30 min
+      conservando lo ya escrito (pide confirmación antes de borrar bloques
+      con texto que quedan fuera del rango); "Vaciar" limpia el día con
+      confirmación; cada bloque tiene actividad de texto libre y checkbox de
+      completado con guardado automático; en días futuros el checkbox está
+      deshabilitado.
+- [ ] 14. Tareas varias — panel lateral para anotar tareas del día como lista
+      de texto (añadir y quitar), con guardado automático.
+- [ ] 15. Historial por fecha — elegir una fecha pasada y ver sus bloques,
+      checks y tareas varias en solo lectura.
+- [ ] 16. Retirar plantillas y el modelo viejo — quitar la sección Plantillas,
+      sus rutas y la generación por plantilla, y eliminar las tablas
+      Template, TemplateTask, TemplateRecurrence y DailyTask con sus datos.
