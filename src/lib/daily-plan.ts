@@ -2,8 +2,16 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { resolveToday } from "@/lib/date";
 
+export async function closePastPlans(today: Date) {
+  await prisma.dailyPlan.updateMany({
+    where: { date: { lt: today }, closed: false },
+    data: { closed: true },
+  });
+}
+
 export async function getOrCreateTodayPlan() {
   const { date, weekday } = resolveToday();
+  await closePastPlans(date);
 
   const existing = await prisma.dailyPlan.findUnique({
     where: { date },

@@ -31,7 +31,12 @@ export function DailyTaskItem({
       if (!res.ok) {
         const body = await res.json().catch(() => null);
         setCompleted(previous);
-        setError(body?.error ?? "Error al guardar la tarea");
+        const message = body?.error ?? "Error al guardar la tarea";
+        setError(
+          res.status === 409
+            ? `${message} Recarga la página para ver el plan de hoy.`
+            : message
+        );
         return;
       }
       setError(null);

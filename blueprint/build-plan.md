@@ -14,7 +14,7 @@
       corresponde (recurrente o default).
 - [x] 7. Vista "Hoy" con checkboxes — listar las tareas del día con checkbox,
       marcar completada/pendiente con guardado automático inmediato.
-- [ ] 8. Cierre de día — snapshot del estado final de las tareas del día
+- [x] 8. Cierre de día — snapshot del estado final de las tareas del día
       cuando termina (o al detectar el cambio de fecha), sin permitir editar
       un día ya cerrado.
 - [ ] 9. Edición manual del día actual — agregar o quitar una tarea puntual
