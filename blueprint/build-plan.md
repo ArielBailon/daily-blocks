@@ -17,7 +17,7 @@
 - [x] 8. Cierre de día — snapshot del estado final de las tareas del día
       cuando termina (o al detectar el cambio de fecha), sin permitir editar
       un día ya cerrado.
-- [ ] 9. Edición manual del día actual — agregar o quitar una tarea puntual
+- [x] 9. Edición manual del día actual — agregar o quitar una tarea puntual
       del plan de hoy sin modificar la plantilla original.
 - [ ] 10. Vista de historial — lista de días pasados con % de tareas
       completadas por día.

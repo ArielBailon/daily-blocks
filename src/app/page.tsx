@@ -1,5 +1,6 @@
 import { getOrCreateTodayPlan } from "@/lib/daily-plan";
 import { DailyTaskItem } from "@/components/hoy/DailyTaskItem";
+import { AddDailyTaskForm } from "@/components/hoy/AddDailyTaskForm";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function HoyPage() {
           <p className="text-foreground/70">
             No hay ninguna plantilla para hoy. Asigna una recurrencia para
             este día o marca una plantilla como predeterminada en
-            Plantillas.
+            Plantillas, o añade una tarea a mano.
           </p>
         ) : plan.tasks.length === 0 ? (
           <p className="text-foreground/70">
@@ -35,6 +36,8 @@ export default async function HoyPage() {
             ))}
           </ul>
         )}
+
+        <AddDailyTaskForm />
       </div>
     </main>
   );

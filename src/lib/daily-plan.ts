@@ -9,6 +9,34 @@ export async function closePastPlans(today: Date) {
   });
 }
 
+// Like getOrCreateTodayPlan, but when no template applies it creates an empty
+// plan (templateId null) so a task can be added by hand.
+export async function getOrCreateTodayPlanForEdit() {
+  const plan = await getOrCreateTodayPlan();
+  if (plan) {
+    return plan;
+  }
+
+  const { date } = resolveToday();
+  try {
+    return await prisma.dailyPlan.create({
+      data: { date, templateId: null },
+      include: { tasks: { orderBy: { order: "asc" } } },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return prisma.dailyPlan.findUniqueOrThrow({
+        where: { date },
+        include: { tasks: { orderBy: { order: "asc" } } },
+      });
+    }
+    throw error;
+  }
+}
+
 export async function getOrCreateTodayPlan() {
   const { date, weekday } = resolveToday();
   await closePastPlans(date);

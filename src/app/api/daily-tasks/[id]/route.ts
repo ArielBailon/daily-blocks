@@ -70,3 +70,42 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  _request: Request,
+  ctx: RouteContext<"/api/daily-tasks/[id]">
+) {
+  const { id: idParam } = await ctx.params;
+  const id = parseId(idParam);
+  if (id === null) {
+    return NextResponse.json({ error: "Tarea no encontrada" }, { status: 404 });
+  }
+
+  try {
+    const { date: today } = resolveToday();
+    // Only today's open plan is editable; the check and the delete are one statement.
+    const { count } = await prisma.dailyTask.deleteMany({
+      where: { id, dailyPlan: { date: today, closed: false } },
+    });
+    if (count > 0) {
+      return new Response(null, { status: 204 });
+    }
+
+    const task = await prisma.dailyTask.findUnique({ where: { id } });
+    if (!task) {
+      return NextResponse.json(
+        { error: "Tarea no encontrada" },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json(
+      { error: "Este día ya está cerrado y no se puede editar." },
+      { status: 409 }
+    );
+  } catch {
+    return NextResponse.json(
+      { error: "Error al eliminar la tarea" },
+      { status: 500 }
+    );
+  }
+}
