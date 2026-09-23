@@ -19,5 +19,5 @@
       un día ya cerrado.
 - [x] 9. Edición manual del día actual — agregar o quitar una tarea puntual
       del plan de hoy sin modificar la plantilla original.
-- [ ] 10. Vista de historial — lista de días pasados con % de tareas
+- [x] 10. Vista de historial — lista de días pasados con % de tareas
       completadas por día.
