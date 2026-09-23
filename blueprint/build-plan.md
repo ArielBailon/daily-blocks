@@ -34,6 +34,16 @@
       confirmación; cada bloque tiene actividad de texto libre y checkbox de
       completado con guardado automático; en días futuros el checkbox está
       deshabilitado.
+    - [x] 13a. Pantalla de bloques para hoy — "Hoy" pasa al diseño de la
+          referencia para el día de hoy: inicio y fin + "Generar día" (crea
+          los bloques conservando lo escrito; confirma antes de borrar
+          bloques con texto fuera del rango) y la grilla con horas en 24 h.
+          Se quita la lista de tareas anterior de Hoy.
+    - [ ] 13b. Editar bloques — escribir la actividad de cada bloque y marcar
+          su checkbox, con guardado automático.
+    - [ ] 13c. Fecha y Vaciar — elegir hoy o un día futuro (fecha en la URL,
+          `/` siempre abre hoy), checkbox deshabilitado en días futuros y
+          "Vaciar" con confirmación.
 - [ ] 14. Tareas varias — panel lateral para anotar tareas del día como lista
       de texto (añadir y quitar), con guardado automático.
 - [ ] 15. Historial por fecha — elegir una fecha pasada y ver sus bloques,
