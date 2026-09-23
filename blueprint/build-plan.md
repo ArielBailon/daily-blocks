@@ -44,7 +44,7 @@
     - [x] 13c. Fecha y Vaciar — elegir hoy o un día futuro (fecha en la URL,
           `/` siempre abre hoy), checkbox deshabilitado en días futuros y
           "Vaciar" con confirmación.
-- [ ] 14. Tareas varias — panel lateral para anotar tareas del día como lista
+- [x] 14. Tareas varias — panel lateral para anotar tareas del día como lista
       de texto (añadir y quitar), con guardado automático.
 - [ ] 15. Historial por fecha — elegir una fecha pasada y ver sus bloques,
       checks y tareas varias en solo lectura.

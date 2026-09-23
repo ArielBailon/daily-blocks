@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { parseDateKey, resolveToday, toDateKey } from "@/lib/date";
 import { GenerateDayForm } from "@/components/hoy/GenerateDayForm";
 import { BlockRow } from "@/components/hoy/BlockRow";
+import { MiscTasksPanel } from "@/components/hoy/MiscTasksPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -34,12 +35,12 @@ export default async function HoyPage({
 
   return (
     <main className="flex flex-1 flex-col px-4 py-10 sm:px-6">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         <header className="flex flex-col gap-1">
           <h1 className="text-3xl font-bold">Planificación por bloques</h1>
           <p className="font-serif text-foreground/60">
             Divide tu jornada en bloques de 30 min y asigna una actividad a
-            cada uno.
+            cada uno. Junta tareas pequeñas en &quot;Tareas varias&quot;.
           </p>
         </header>
 
@@ -52,27 +53,38 @@ export default async function HoyPage({
           initialEnd={plan?.endTime ?? DEFAULT_END}
         />
 
-        <div className="overflow-hidden rounded-xl border border-muted bg-surface">
-          {blocks.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-foreground/60">
-              Todavía no generaste este día. Elige el horario y pulsa Generar
-              día.
-            </p>
-          ) : (
-            <ol>
-              {blocks.map((block) => (
-                <BlockRow
-                  key={block.id}
-                  dateKey={dateKey}
-                  id={block.id}
-                  startTime={block.startTime}
-                  initialActivity={block.activity}
-                  initialCompleted={block.completed}
-                  canComplete={!isFuture}
-                />
-              ))}
-            </ol>
-          )}
+        <div className="flex flex-col gap-6 md:flex-row-reverse md:items-start">
+          <div className="md:w-72 md:shrink-0">
+            <MiscTasksPanel
+              key={dateKey}
+              dateKey={dateKey}
+              initialTasks={plan?.miscTasks ?? []}
+            />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="overflow-hidden rounded-xl border border-muted bg-surface">
+              {blocks.length === 0 ? (
+                <p className="px-4 py-6 text-sm text-foreground/60">
+                  Todavía no generaste este día. Elige el horario y pulsa Generar
+                  día.
+                </p>
+              ) : (
+                <ol>
+                  {blocks.map((block) => (
+                    <BlockRow
+                      key={block.id}
+                      dateKey={dateKey}
+                      id={block.id}
+                      startTime={block.startTime}
+                      initialActivity={block.activity}
+                      initialCompleted={block.completed}
+                      canComplete={!isFuture}
+                    />
+                  ))}
+                </ol>
+              )}
+            </div>
+          </div>
         </div>
 
         {blocks.length > 0 && (

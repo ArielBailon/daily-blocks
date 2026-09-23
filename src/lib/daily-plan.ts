@@ -74,6 +74,48 @@ export async function generateDay(input: {
   }
 }
 
+export type SaveMiscTasksResult =
+  | { kind: "ok"; tasks: string[] }
+  | { kind: "closed" };
+
+// Replaces the day's "Tareas varias" list, creating the plan (with the schema's
+// default range and no blocks) when the day has none yet.
+export async function saveMiscTasks(input: {
+  date: Date;
+  tasks: string[];
+}): Promise<SaveMiscTasksResult> {
+  const run = () =>
+    prisma.$transaction(async (tx): Promise<SaveMiscTasksResult> => {
+      const { date, tasks } = input;
+      const plan = await tx.dailyPlan.upsert({
+        where: { date },
+        create: { date, miscTasks: tasks },
+        update: {},
+      });
+      if (plan.closed) {
+        return { kind: "closed" };
+      }
+      const updated = await tx.dailyPlan.update({
+        where: { id: plan.id },
+        data: { miscTasks: tasks },
+      });
+      return { kind: "ok", tasks: updated.miscTasks };
+    });
+
+  try {
+    return await run();
+  } catch (error) {
+    // A concurrent first save for the same date can race on the unique date.
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return run();
+    }
+    throw error;
+  }
+}
+
 export async function closePastPlans(today: Date) {
   await prisma.dailyPlan.updateMany({
     where: { date: { lt: today }, closed: false },

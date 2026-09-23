@@ -27,3 +27,16 @@ export const blockUpdateInput = z
   .refine((v) => v.activity !== undefined || v.completed !== undefined, {
     message: "No hay cambios que guardar",
   });
+
+export const miscTasksInput = z.object({
+  tasks: z
+    .array(
+      z
+        .string("La tarea debe ser texto")
+        .trim()
+        .min(1, "La tarea no puede estar vacía")
+        .max(200, "La tarea no puede superar 200 caracteres"),
+      "Las tareas deben ser una lista"
+    )
+    .max(50, "Máximo 50 tareas"),
+});
