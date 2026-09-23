@@ -1,4 +1,5 @@
 import { getOrCreateTodayPlan } from "@/lib/daily-plan";
+import { DailyTaskItem } from "@/components/hoy/DailyTaskItem";
 
 export const dynamic = "force-dynamic";
 
@@ -23,16 +24,13 @@ export default async function HoyPage() {
         ) : (
           <ul className="flex flex-col gap-3">
             {plan.tasks.map((task) => (
-              <li
-                key={task.id}
-                className="flex items-center justify-between gap-4 border-b border-muted pb-3"
-              >
-                <span>{task.title}</span>
-                {task.suggestedTime && (
-                  <span className="text-sm text-foreground/70">
-                    {task.suggestedTime}
-                  </span>
-                )}
+              <li key={task.id} className="border-b border-muted pb-3">
+                <DailyTaskItem
+                  id={task.id}
+                  title={task.title}
+                  suggestedTime={task.suggestedTime}
+                  initialCompleted={task.completed}
+                />
               </li>
             ))}
           </ul>

@@ -12,7 +12,7 @@
 - [x] 6. Generación automática del plan diario — al abrir "Hoy" sin plan
       existente para la fecha, se crea a partir de la plantilla que
       corresponde (recurrente o default).
-- [ ] 7. Vista "Hoy" con checkboxes — listar las tareas del día con checkbox,
+- [x] 7. Vista "Hoy" con checkboxes — listar las tareas del día con checkbox,
       marcar completada/pendiente con guardado automático inmediato.
 - [ ] 8. Cierre de día — snapshot del estado final de las tareas del día
       cuando termina (o al detectar el cambio de fecha), sin permitir editar
