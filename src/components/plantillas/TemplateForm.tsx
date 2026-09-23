@@ -168,10 +168,10 @@ export function TemplateForm(props: TemplateFormProps) {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => toggleWeekday(day.value)}
-                className={`rounded border px-3 py-1 text-sm ${
+                className={`rounded border px-3 py-1 text-sm transition-colors ${
                   selected
-                    ? "border-accent bg-accent text-background"
-                    : "border-muted text-foreground/70"
+                    ? "border-accent bg-accent text-background hover:bg-accent/85"
+                    : "border-muted text-foreground/70 hover:border-accent hover:text-accent"
                 }`}
               >
                 {day.label}
@@ -234,7 +234,7 @@ export function TemplateForm(props: TemplateFormProps) {
                 onClick={() => moveTask(index, -1)}
                 disabled={index === 0}
                 aria-label="Subir tarea"
-                className="disabled:opacity-30"
+                className="transition-colors enabled:hover:text-accent disabled:opacity-30"
               >
                 ↑
               </button>
@@ -243,7 +243,7 @@ export function TemplateForm(props: TemplateFormProps) {
                 onClick={() => moveTask(index, 1)}
                 disabled={index === tasks.length - 1}
                 aria-label="Bajar tarea"
-                className="disabled:opacity-30"
+                className="transition-colors enabled:hover:text-accent disabled:opacity-30"
               >
                 ↓
               </button>
@@ -251,7 +251,7 @@ export function TemplateForm(props: TemplateFormProps) {
                 type="button"
                 onClick={() => removeTask(index)}
                 aria-label="Eliminar tarea"
-                className="hover:text-accent"
+                className="transition-colors hover:text-accent"
               >
                 ✕
               </button>
@@ -261,7 +261,7 @@ export function TemplateForm(props: TemplateFormProps) {
         <button
           type="button"
           onClick={() => setTasks((rows) => [...rows, emptyTask()])}
-          className="self-start text-sm text-accent"
+          className="self-start text-sm text-accent underline-offset-4 hover:underline"
         >
           Añadir tarea
         </button>
@@ -270,7 +270,7 @@ export function TemplateForm(props: TemplateFormProps) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded bg-accent px-4 py-2 text-background disabled:opacity-50"
+        className="self-start rounded bg-accent px-4 py-2 text-background transition-colors enabled:hover:bg-accent/85 disabled:opacity-50"
       >
         {pending ? "Guardando…" : "Guardar"}
       </button>

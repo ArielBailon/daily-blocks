@@ -104,7 +104,7 @@ export function DailyTaskItem({
           onClick={handleDelete}
           disabled={pending}
           aria-label={`Eliminar "${title}"`}
-          className="px-2 py-1 text-sm text-foreground/70 hover:text-accent disabled:opacity-30"
+          className="px-2 py-1 text-sm text-foreground/70 transition-colors enabled:hover:text-accent disabled:opacity-30"
         >
           ✕
         </button>

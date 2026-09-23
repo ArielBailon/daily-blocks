@@ -36,7 +36,10 @@ export default async function PlantillasPage() {
       <div className="mx-auto flex w-full max-w-md flex-col gap-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">Plantillas</h1>
-          <Link href="/plantillas/nueva" className="text-accent">
+          <Link
+            href="/plantillas/nueva"
+            className="text-accent underline-offset-4 hover:underline"
+          >
             Nueva plantilla
           </Link>
         </div>
@@ -52,8 +55,11 @@ export default async function PlantillasPage() {
                 key={template.id}
                 className="flex items-center justify-between gap-4 border-b border-muted pb-3"
               >
-                <Link href={`/plantillas/${template.id}`} className="flex-1">
-                  <span className="block font-medium">
+                <Link
+                  href={`/plantillas/${template.id}`}
+                  className="group flex-1"
+                >
+                  <span className="block font-medium transition-colors group-hover:text-accent">
                     {template.name}
                     {template.isDefault ? (
                       <span className="ml-2 text-xs text-accent">

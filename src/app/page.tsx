@@ -12,13 +12,7 @@ export default async function HoyPage() {
       <div className="mx-auto flex w-full max-w-md flex-col gap-6">
         <h1 className="text-2xl font-semibold">Hoy</h1>
 
-        {!plan ? (
-          <p className="text-foreground/70">
-            No hay ninguna plantilla para hoy. Asigna una recurrencia para
-            este día o marca una plantilla como predeterminada en
-            Plantillas, o añade una tarea a mano.
-          </p>
-        ) : plan.tasks.length === 0 ? (
+        {!plan ? null : plan.tasks.length === 0 ? (
           <p className="text-foreground/70">
             El plan de hoy no tiene tareas.
           </p>
