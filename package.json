@@ -6,6 +6,7 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "build": "next build",
+    "vercel-build": "prisma migrate deploy --config prisma7.config.ts && next build",
     "start": "next start",
     "lint": "eslint"
   },

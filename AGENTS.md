@@ -295,6 +295,7 @@ checks do not make the Blueprint unusable.
 - Build: `npm run build`
 - Production server: `npm run start`
 - Lint: `npm run lint`
+- Vercel build: `npm run vercel-build` (runs `prisma migrate deploy`, then `next build`; Vercel uses it automatically)
 
 Testing is opt-in. If this project does not already have a unit test runner, run
 `/tests` or `$tests` to add one and update this section with the real test

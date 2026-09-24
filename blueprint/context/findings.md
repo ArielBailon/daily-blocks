@@ -84,7 +84,7 @@ regenerated it via `postinstall`), then confirmed both `npm run dev` (`GET
 /plantillas` returns `200`) and `npm run build` succeed. Not yet closed - no
 review has looked at the fix.
 
-### F-07 [P2] unverified - Nothing applies the migration on a production deploy
+### F-07 [P2] fixed - Nothing applies the migration on a production deploy
 
 **File:** package.json:8
 **Found:** 2026-09-22 by /audit (scope: current; lens: quality)
@@ -109,4 +109,9 @@ next build"`). Do not add it to the local `prebuild`: `prisma migrate dev`
 already owns local schema changes per `coding-standards.md:64`, and running
 `migrate deploy` on every local build would be machinery this project does not
 need yet.
-**Resolution:**
+**Resolution:** During /release (2026-09-24) added a `vercel-build` script to
+`package.json`: `prisma migrate deploy --config prisma7.config.ts && next build`.
+Vercel runs `vercel-build` instead of `build` when it exists, so local
+`npm run build` stays migration-free. Verified locally with `npm run vercel-build`:
+"No pending migrations to apply." and the build passed. Not yet closed - no review
+has looked at the fix, and it has not run on Vercel yet.
