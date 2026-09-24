@@ -48,6 +48,6 @@
       de texto (añadir y quitar), con guardado automático.
 - [x] 15. Historial por fecha — elegir una fecha pasada y ver sus bloques,
       checks y tareas varias en solo lectura.
-- [ ] 16. Retirar plantillas y el modelo viejo — quitar la sección Plantillas,
+- [x] 16. Retirar plantillas y el modelo viejo — quitar la sección Plantillas,
       sus rutas y la generación por plantilla, y eliminar las tablas
       Template, TemplateTask, TemplateRecurrence y DailyTask con sus datos.
