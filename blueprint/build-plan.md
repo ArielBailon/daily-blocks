@@ -46,7 +46,7 @@
           "Vaciar" con confirmación.
 - [x] 14. Tareas varias — panel lateral para anotar tareas del día como lista
       de texto (añadir y quitar), con guardado automático.
-- [ ] 15. Historial por fecha — elegir una fecha pasada y ver sus bloques,
+- [x] 15. Historial por fecha — elegir una fecha pasada y ver sus bloques,
       checks y tareas varias en solo lectura.
 - [ ] 16. Retirar plantillas y el modelo viejo — quitar la sección Plantillas,
       sus rutas y la generación por plantilla, y eliminar las tablas

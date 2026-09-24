@@ -123,29 +123,6 @@ export async function closePastPlans(today: Date) {
   });
 }
 
-export async function getPastPlansSummary() {
-  const { date: today } = resolveToday();
-  await closePastPlans(today);
-
-  const plans = await prisma.dailyPlan.findMany({
-    where: { date: { lt: today } },
-    orderBy: { date: "desc" },
-    select: { id: true, date: true, tasks: { select: { completed: true } } },
-  });
-
-  return plans.map((plan) => {
-    const total = plan.tasks.length;
-    const completed = plan.tasks.filter((task) => task.completed).length;
-    return {
-      id: plan.id,
-      date: plan.date,
-      total,
-      completed,
-      percent: total === 0 ? null : Math.round((completed / total) * 100),
-    };
-  });
-}
-
 // Like getOrCreateTodayPlan, but when no template applies it creates an empty
 // plan (templateId null) so a task can be added by hand.
 export async function getOrCreateTodayPlanForEdit() {
