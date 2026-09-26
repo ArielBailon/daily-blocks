@@ -55,8 +55,12 @@ inicio y fin con "Generar día" y "Vaciar"; grilla de bloques con la hora en
 checkbox por fila; panel lateral "Tareas varias"; pie "Se guarda
 automáticamente". Debe verse bien en móvil (viewport angosto) — es el uso
 principal desde el celular.
+Instalable como PWA en el celular (ícono en la pantalla de inicio, se abre a
+pantalla completa sin barra del navegador). Sin conexión muestra una pantalla
+simple de "Sin conexión"; no hay lectura ni edición offline.
 
 ## 8. Despliegue
 Vercel, con Prisma Postgres (provisionado desde el dashboard de Vercel) como
 base de datos — accesible desde PC y celular vía la URL pública una vez
-deployado.
+deployado. La instalación como PWA requiere HTTPS, que la URL de Vercel ya
+provee.

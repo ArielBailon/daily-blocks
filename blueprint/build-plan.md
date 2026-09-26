@@ -51,3 +51,7 @@
 - [x] 16. Retirar plantillas y el modelo viejo — quitar la sección Plantillas,
       sus rutas y la generación por plantilla, y eliminar las tablas
       Template, TemplateTask, TemplateRecurrence y DailyTask con sus datos.
+- [x] 17. App instalable (PWA) — manifest con nombre, colores del tema oscuro e
+      íconos, para poder instalar la app en el celular y abrirla a pantalla
+      completa (sin barra del navegador); sin conexión muestra una pantalla
+      simple de "Sin conexión" (no hay lectura ni edición offline).

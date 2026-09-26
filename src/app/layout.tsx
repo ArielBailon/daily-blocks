@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lora } from "next/font/google";
 import { NavBar } from "@/components/layout/NavBar";
+import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import "./globals.css";
 
 const lora = Lora({
@@ -11,6 +12,15 @@ const lora = Lora({
 export const metadata: Metadata = {
   title: "daily-blocks",
   description: "Planificación diaria por bloques de tiempo",
+  appleWebApp: {
+    capable: true,
+    title: "daily-blocks",
+    statusBarStyle: "black",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#171512",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -19,6 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <NavBar />
         {children}
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

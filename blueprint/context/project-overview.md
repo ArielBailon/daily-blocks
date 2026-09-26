@@ -1,6 +1,6 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash e2ea9d05092d19bd0ae216aff2e6fdd5ba27d7586f27f21f19fa2063dcb70528 -->
+<!-- blueprint:source-hash 449f330108322dbb67cc55ecc8680ec8be657f266a2cb0e136503cb19defe59c -->
 
 > A personal day planner that splits the day into 30-minute blocks, each with
 > a free-text activity and a completion checkbox, plus a small log of misc
@@ -22,7 +22,8 @@ deployed URL; mobile is the primary surface for the daily view.
 
 Features 1-10 are built (the original template-based checklist). Features
 11-16 move the app to the block planner and then retire the template model.
-The headline is **"Hoy" as block planning (13)**.
+The headline is **"Hoy" as block planning (13)**. 17 makes the app
+installable on the phone.
 
 1. **Layout and navigation** - app shell with "Hoy", "Plantillas", "Historial".
 2. **Prisma data schema** - Template, TemplateTask, TemplateRecurrence,
@@ -55,6 +56,10 @@ The headline is **"Hoy" as block planning (13)**.
 16. **Retire templates and the old model** - remove the Plantillas section,
     its routes, and template-based generation; drop Template, TemplateTask,
     TemplateRecurrence, and DailyTask with their data.
+17. **Installable app (PWA)** - web app manifest (name, dark-theme colors,
+    icons) so the app can be installed on the phone and opened full screen
+    without browser chrome. Offline shows a simple "Sin conexión" screen;
+    no offline reading or editing.
 
 ## Data model
 
@@ -122,6 +127,8 @@ Design reference: `blueprint/reference/planificacion-por-bloques.png`.
   saying "Se guarda automáticamente".
 - `/historial` - pick a past date and see that day read-only.
 - Navigation: Hoy and Historial. Plantillas is removed in 16.
+- Installable as a PWA (17): home-screen icon, opens full screen. Offline
+  shows only a "Sin conexión" screen; no offline data.
 
 ## Deployment
 
@@ -129,6 +136,7 @@ Design reference: `blueprint/reference/planificacion-por-bloques.png`.
 - **Database:** Prisma Postgres, free tier, via Vercel Storage, connected with
   `DATABASE_URL`.
 - **Env vars:** `DATABASE_URL`.
+- **PWA:** installation requires HTTPS, which the Vercel URL provides.
 
 > TODO: build/start commands, migration step on deploy, health checks, and
 > domain are not decided; revisit in `/release`.
