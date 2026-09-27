@@ -13,7 +13,7 @@ export type GenerateDayResult =
   | { kind: "needs-confirmation"; count: number }
   | { kind: "closed" };
 
-// Creates the day's blocks for [startTime, endTime). Blocks already inside the
+// Creates the day's blocks for [startTime, endTime]. Blocks already inside the
 // range are kept as they are; blocks outside it are deleted, but blocks with
 // content (activity or check) are only deleted when confirmRemoval is true.
 export async function generateDay(input: {

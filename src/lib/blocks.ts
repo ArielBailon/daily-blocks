@@ -16,11 +16,12 @@ export function fromMinutes(total: number): string {
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
 
-// Block start times covering [start, end): the start is included, the end is not.
+// Block start times covering [start, end]: both ends are included, so the last
+// block starts at the end time.
 export function buildBlockTimes(start: string, end: string): string[] {
   const times: string[] = [];
   const last = toMinutes(end);
-  for (let t = toMinutes(start); t < last; t += BLOCK_MINUTES) {
+  for (let t = toMinutes(start); t <= last; t += BLOCK_MINUTES) {
     times.push(fromMinutes(t));
   }
   return times;

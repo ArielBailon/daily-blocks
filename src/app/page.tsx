@@ -7,8 +7,8 @@ import { MiscTasksPanel } from "@/components/hoy/MiscTasksPanel";
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_START = "07:30";
-const DEFAULT_END = "18:00";
+const DEFAULT_START = "06:30";
+const DEFAULT_END = "21:00";
 
 export default async function HoyPage({
   searchParams,

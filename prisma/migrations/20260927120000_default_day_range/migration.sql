@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "DailyPlan" ALTER COLUMN "startTime" SET DEFAULT '06:30',
+ALTER COLUMN "endTime" SET DEFAULT '21:00';

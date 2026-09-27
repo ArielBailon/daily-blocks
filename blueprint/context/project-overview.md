@@ -1,6 +1,6 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash 449f330108322dbb67cc55ecc8680ec8be657f266a2cb0e136503cb19defe59c -->
+<!-- blueprint:source-hash 9e04df8e2a0e5d4c399a2d1ffea7124b13de61604d7edd14b9233634e97a9ad5 -->
 
 > A personal day planner that splits the day into 30-minute blocks, each with
 > a free-text activity and a completion checkbox, plus a small log of misc
@@ -43,10 +43,10 @@ installable on the phone.
 12. **Block day model** - `DailyPlan` gains start/end time and a misc-tasks
     list; new `Block` model. Additive migration; existing data untouched.
 13. **Block planning in "Hoy"** *(headline)* - pick the date (today or future)
-    and start/end (only `:00`/`:30`, default 07:30-18:00). "Generar día"
-    builds the 30-minute blocks while keeping what's already written, and asks
-    for confirmation before deleting blocks with text that fall outside the
-    new range. "Vaciar" clears the day after confirmation. Each block has a
+    and start/end (only `:00`/`:30`, default 06:30-21:00). "Generar día"
+    builds the 30-minute blocks from start to end, both included, while
+    keeping what's already written, and asks for confirmation before deleting
+    blocks with text that fall outside the new range. "Vaciar" clears the day after confirmation. Each block has a
     free-text activity and a completion checkbox, auto-saved. On future days
     the checkbox is disabled.
 14. **Tareas varias** - side panel to log the day's small tasks as a text
@@ -71,9 +71,10 @@ Target model once 16 lands. Until then the legacy models below still exist.
 - `date` (date, unique) - one plan per calendar day
 - `closed` (bool, default false) - true once the day is past; closed days are
   read-only
-- `startTime` (string `HH:MM`, default `"07:30"`) - start of the day's range
-- `endTime` (string `HH:MM`, default `"18:00"`) - end of the day's range
-  (exclusive; blocks cover `[startTime, endTime)` in 30-minute steps)
+- `startTime` (string `HH:MM`, default `"06:30"`) - start of the day's range
+- `endTime` (string `HH:MM`, default `"21:00"`) - end of the day's range
+  (inclusive; blocks cover `[startTime, endTime]` in 30-minute steps, so the
+  last block starts at `endTime`)
 - `miscTasks` (string list, default empty) - the "Tareas varias" log, in
   insertion order
 - has many `Block`

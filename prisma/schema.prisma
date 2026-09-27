@@ -16,8 +16,8 @@ model DailyPlan {
   id        Int      @id @default(autoincrement())
   date      DateTime @unique @db.Date
   closed    Boolean  @default(false)
-  startTime String   @default("07:30")
-  endTime   String   @default("18:00")
+  startTime String   @default("06:30")
+  endTime   String   @default("21:00")
   miscTasks String[] @default([])
   blocks    Block[]
 }
