@@ -296,10 +296,8 @@ checks do not make the Blueprint unusable.
 - Production server: `npm run start`
 - Lint: `npm run lint`
 - Vercel build: `npm run vercel-build` (runs `prisma migrate deploy`, then `next build`; Vercel uses it automatically)
-
-Testing is opt-in. If this project does not already have a unit test runner, run
-`/tests` or `$tests` to add one and update this section with the real test
-commands.
+- Test: `npm test` (Vitest, single run; test files live next to source as `src/**/*.test.ts`)
+- Test watch: `npm run test:watch`
 
 Browser testing is also opt-in. Run `/tests browser` or `$tests browser` to add
 or normalize a browser harness and document its exact command as `Browser
