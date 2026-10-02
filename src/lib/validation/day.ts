@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { TIME_PATTERN, toMinutes } from "@/lib/blocks";
+import { BLOCK_TAGS } from "@/lib/block-tags";
 
 const blockTime = z
   .string("La hora es obligatoria")
@@ -23,10 +24,15 @@ export const blockUpdateInput = z
       .max(200, "La actividad no puede superar 200 caracteres")
       .optional(),
     completed: z.boolean("El estado del bloque debe ser verdadero o falso").optional(),
+    tag: z.enum(BLOCK_TAGS, "Etiqueta inválida").nullable().optional(),
   })
-  .refine((v) => v.activity !== undefined || v.completed !== undefined, {
-    message: "No hay cambios que guardar",
-  });
+  .refine(
+    (v) =>
+      v.activity !== undefined ||
+      v.completed !== undefined ||
+      v.tag !== undefined,
+    { message: "No hay cambios que guardar" }
+  );
 
 export const miscTasksInput = z.object({
   tasks: z

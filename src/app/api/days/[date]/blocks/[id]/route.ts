@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { parseDateKey, resolveToday } from "@/lib/date";
 import { blockUpdateInput } from "@/lib/validation/day";
@@ -43,16 +44,18 @@ export async function PATCH(
     );
   }
 
-  const { activity, completed } = parsed.data;
+  const { activity, completed, tag } = parsed.data;
   if (completed !== undefined && date.getTime() > today.getTime()) {
     return NextResponse.json(
       { error: "Solo se pueden marcar bloques de hoy" },
       { status: 400 }
     );
   }
-  const data = {
+  // Typed against Prisma's input so the tag list can't drift from the enum.
+  const data: Prisma.BlockUpdateManyMutationInput = {
     ...(activity !== undefined && { activity }),
     ...(completed !== undefined && { completed }),
+    ...(tag !== undefined && { tag }),
   };
 
   try {
@@ -83,6 +86,7 @@ export async function PATCH(
       startTime: block.startTime,
       activity: block.activity,
       completed: block.completed,
+      tag: block.tag,
     });
   } catch {
     return NextResponse.json(

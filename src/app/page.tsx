@@ -36,13 +36,7 @@ export default async function HoyPage({
   return (
     <main className="flex flex-1 flex-col px-4 py-10 sm:px-6">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
-        <header className="flex flex-col gap-1">
-          <h1 className="text-3xl font-bold">Planificación por bloques</h1>
-          <p className="font-serif text-foreground/60">
-            Divide tu jornada en bloques de 30 min y asigna una actividad a
-            cada uno. Junta tareas pequeñas en &quot;Tareas varias&quot;.
-          </p>
-        </header>
+        <h1 className="text-3xl font-bold">Daily Blocks</h1>
 
         <GenerateDayForm
           key={dateKey}
@@ -78,6 +72,7 @@ export default async function HoyPage({
                       startTime={block.startTime}
                       initialActivity={block.activity}
                       initialCompleted={block.completed}
+                      initialTag={block.tag}
                       canComplete={!isFuture}
                     />
                   ))}

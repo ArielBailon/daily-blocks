@@ -15,7 +15,7 @@ export type GenerateDayResult =
 
 // Creates the day's blocks for [startTime, endTime]. Blocks already inside the
 // range are kept as they are; blocks outside it are deleted, but blocks with
-// content (activity or check) are only deleted when confirmRemoval is true.
+// content (activity, check, or tag) are only deleted when confirmRemoval is true.
 export async function generateDay(input: {
   date: Date;
   startTime: string;
@@ -37,7 +37,9 @@ export async function generateDay(input: {
 
       const wanted = buildBlockTimes(startTime, endTime);
       const outside = plan.blocks.filter((b) => !wanted.includes(b.startTime));
-      const withContent = outside.filter((b) => b.activity !== "" || b.completed);
+      const withContent = outside.filter(
+        (b) => b.activity !== "" || b.completed || b.tag !== null
+      );
       if (withContent.length > 0 && !input.confirmRemoval) {
         return { kind: "needs-confirmation", count: withContent.length };
       }

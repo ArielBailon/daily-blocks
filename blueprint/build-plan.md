@@ -55,3 +55,21 @@
       íconos, para poder instalar la app en el celular y abrirla a pantalla
       completa (sin barra del navegador); sin conexión muestra una pantalla
       simple de "Sin conexión" (no hay lectura ni edición offline).
+- [x] 18. Etiquetas de bloque — cada bloque puede llevar una etiqueta opcional
+      (DEEP, LINKEDIN, GYM, WALK, PROTEIN, APPLY, INTERVIEW, SCREENS_OFF, BED),
+      elegida en "Hoy" con un selector compacto que se guarda solo; Historial
+      la muestra en solo lectura. Migración aditiva, sin tocar lo existente.
+- [ ] 19. Bloques por defecto al generar el día — de lunes a sábado, "Generar
+      día" precarga los bloques fijos del Winter Arc (actividad + etiqueta)
+      solo en bloques vacíos que caen dentro del rango; los domingos no se
+      precarga nada. Rango por defecto 06:30–22:00 todos los días. Es una
+      constante en código: no vuelven las plantillas.
+- [ ] 20. Motor de reglas y vista Winter Arc — reglas R1–R5 evaluadas con
+      funciones puras a partir de etiquetas y checks; estado del día (verde,
+      amarillo, rojo, gris), racha "nunca fallar dos veces seguidas" y ritmo
+      semanal de gym y postulaciones (solo en semanas completas); nueva
+      sección "Winter Arc" con "Día X de 90", grilla de 90 días con detalle
+      por regla y % por regla.
+- [ ] 21. API de lectura — `GET /api/days?from&to` (días con bloques,
+      etiquetas y tareas varias, máximo 120 días) y `GET /api/arc/stats` (el
+      mismo cálculo de la vista Winter Arc). Solo lectura.

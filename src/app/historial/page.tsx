@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { closePastPlans, getDayPlan } from "@/lib/daily-plan";
 import { parseDateKey, resolveToday, toDateKey } from "@/lib/date";
 import { isOnTheHour } from "@/lib/blocks";
+import { BLOCK_TAG_LABELS } from "@/lib/block-tags";
 import { HistoryDatePicker } from "@/components/historial/HistoryDatePicker";
 
 export const dynamic = "force-dynamic";
@@ -92,17 +93,28 @@ export default async function HistorialPage({
                       {plan.blocks.map((block) => (
                         <li
                           key={block.id}
-                          className="flex border-b border-muted last:border-b-0"
+                          className={`flex border-b border-muted last:border-b-0 ${
+                            isOnTheHour(block.startTime)
+                              ? "bg-foreground/[0.025]"
+                              : ""
+                          }`}
                         >
-                          <span
-                            className={`w-20 shrink-0 border-r border-muted px-3 py-3 text-right text-sm tabular-nums ${
-                              isOnTheHour(block.startTime)
-                                ? "font-semibold text-foreground"
-                                : "text-foreground/60"
-                            }`}
-                          >
-                            {block.startTime}
-                          </span>
+                          <div className="flex w-20 shrink-0 flex-col items-end justify-center border-r border-muted px-3 py-2">
+                            <span
+                              className={`text-sm tabular-nums ${
+                                isOnTheHour(block.startTime)
+                                  ? "font-semibold text-foreground"
+                                  : "text-foreground/60"
+                              }`}
+                            >
+                              {block.startTime}
+                            </span>
+                            {block.tag && (
+                              <span className="text-xs text-accent">
+                                {BLOCK_TAG_LABELS[block.tag]}
+                              </span>
+                            )}
+                          </div>
                           <span
                             className={`min-h-12 min-w-0 flex-1 break-words px-3 py-3 ${
                               block.completed

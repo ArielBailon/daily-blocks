@@ -22,6 +22,18 @@ model DailyPlan {
   blocks    Block[]
 }
 
+enum BlockTag {
+  DEEP
+  LINKEDIN
+  GYM
+  WALK
+  PROTEIN
+  APPLY
+  INTERVIEW
+  SCREENS_OFF
+  BED
+}
+
 model Block {
   id          Int       @id @default(autoincrement())
   dailyPlanId Int
@@ -29,6 +41,7 @@ model Block {
   startTime   String
   activity    String    @default("")
   completed   Boolean   @default(false)
+  tag         BlockTag?
 
   @@unique([dailyPlanId, startTime])
 }

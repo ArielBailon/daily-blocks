@@ -72,6 +72,7 @@ export async function POST(
         startTime: b.startTime,
         activity: b.activity,
         completed: b.completed,
+        tag: b.tag,
       })),
     });
   } catch {

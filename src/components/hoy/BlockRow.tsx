@@ -2,10 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { isOnTheHour } from "@/lib/blocks";
+import { BLOCK_TAGS, BLOCK_TAG_LABELS, type BlockTag } from "@/lib/block-tags";
 
 const SAVE_DELAY_MS = 600;
+const OPTION_CLASS = "bg-surface text-left text-sm text-foreground";
 
-type BlockFields = { activity?: string; completed?: boolean };
+type BlockFields = {
+  activity?: string;
+  completed?: boolean;
+  tag?: BlockTag | null;
+};
 
 export function BlockRow({
   dateKey,
@@ -13,6 +19,7 @@ export function BlockRow({
   startTime,
   initialActivity,
   initialCompleted,
+  initialTag,
   canComplete,
 }: {
   dateKey: string;
@@ -20,10 +27,12 @@ export function BlockRow({
   startTime: string;
   initialActivity: string;
   initialCompleted: boolean;
+  initialTag: BlockTag | null;
   canComplete: boolean;
 }) {
   const [activity, setActivity] = useState(initialActivity);
   const [completed, setCompleted] = useState(initialCompleted);
+  const [tag, setTag] = useState(initialTag);
   const [error, setError] = useState<string | null>(null);
 
   const url = `/api/days/${dateKey}/blocks/${id}`;
@@ -33,6 +42,7 @@ export function BlockRow({
   const confirmed = useRef({
     activity: initialActivity,
     completed: initialCompleted,
+    tag: initialTag,
   });
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestActivity = useRef(initialActivity);
@@ -57,6 +67,7 @@ export function BlockRow({
       confirmed.current = {
         activity: body.activity,
         completed: body.completed,
+        tag: body.tag,
       };
       setError(null);
       return true;
@@ -77,6 +88,9 @@ export function BlockRow({
         const ok = await send(batch);
         if (!ok && batch.completed !== undefined) {
           setCompleted(confirmed.current.completed);
+        }
+        if (!ok && batch.tag !== undefined) {
+          setTag(confirmed.current.tag);
         }
       }
     } finally {
@@ -113,6 +127,12 @@ export function BlockRow({
     save({ completed: next });
   }
 
+  function handleTagChange(value: string) {
+    const next = value === "" ? null : (value as BlockTag);
+    setTag(next);
+    save({ tag: next });
+  }
+
   // Flush a save still waiting on the typing pause when the row goes away.
   useEffect(() => {
     return () => {
@@ -129,17 +149,41 @@ export function BlockRow({
   }, [url]);
 
   return (
-    <li className="border-b border-muted last:border-b-0">
+    <li
+      className={`border-b border-muted last:border-b-0 ${
+        isOnTheHour(startTime) ? "bg-foreground/[0.025]" : ""
+      }`}
+    >
       <div className="flex focus-within:ring-1 focus-within:ring-inset focus-within:ring-accent/40">
-        <span
-          className={`w-20 shrink-0 border-r border-muted px-3 py-3 text-right text-sm tabular-nums ${
-            isOnTheHour(startTime)
-              ? "font-semibold text-foreground"
-              : "text-foreground/60"
-          }`}
-        >
-          {startTime}
-        </span>
+        <div className="flex w-20 shrink-0 flex-col items-end justify-center border-r border-muted px-3 py-2">
+          <span
+            className={`text-sm tabular-nums ${
+              isOnTheHour(startTime)
+                ? "font-semibold text-foreground"
+                : "text-foreground/60"
+            }`}
+          >
+            {startTime}
+          </span>
+          <select
+            value={tag ?? ""}
+            aria-label={`Etiqueta ${startTime}`}
+            onChange={(e) => handleTagChange(e.target.value)}
+            className={`w-full cursor-pointer appearance-none truncate bg-transparent text-right text-xs [text-align-last:right] outline-none ${
+              tag ? "text-accent" : "text-foreground/40"
+            }`}
+          >
+            {/* The native picker takes its colors from the options, not the transparent select. */}
+            <option value="" className={OPTION_CLASS}>
+              —
+            </option>
+            {BLOCK_TAGS.map((t) => (
+              <option key={t} value={t} className={OPTION_CLASS}>
+                {BLOCK_TAG_LABELS[t]}
+              </option>
+            ))}
+          </select>
+        </div>
         <input
           type="text"
           maxLength={200}
