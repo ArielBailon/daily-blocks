@@ -75,7 +75,7 @@
           las 17:00 y 17:30 de los días normales, "Protein shake" (etiqueta
           PROTEIN) a las 18:00 el jueves y el domingo, y la etiqueta
           SCREENS_OFF en la lectura nocturna (22:00–23:00, todos los días).
-    - [ ] 20b. Motor de reglas — funciones puras con tests, sin interfaz.
+    - [x] 20b. Motor de reglas — funciones puras con tests, sin interfaz.
           Diarias: DEEP (lunes a sábado: 8 bloques DEEP con check, solo
           cuentan tramos de 2 bloques seguidos o más; un bloque sin check
           corta el tramo) y SCREENS_OFF (todos los días: al menos 2 bloques

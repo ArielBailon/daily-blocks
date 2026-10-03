@@ -1,6 +1,6 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash 502c49a1466cfba70f96f02684aee2b7f6b023cb9c03ed92cfa2850173a2e54b -->
+<!-- blueprint:source-hash 32bff6577c70df25da1435e970f50633dc39a96b21038af2d608b63f62832d1c -->
 
 > A personal day planner that splits the day into 30-minute blocks, each with
 > a free-text activity, an optional tag and a completion checkbox, plus a small
