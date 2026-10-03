@@ -1,6 +1,6 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash 4be2815c97ad70de8e1cef0788f8f61c286a85dd96570a5652dba35d7c72b10f -->
+<!-- blueprint:source-hash 502c49a1466cfba70f96f02684aee2b7f6b023cb9c03ed92cfa2850173a2e54b -->
 
 > A personal day planner that splits the day into 30-minute blocks, each with
 > a free-text activity, an optional tag and a completion checkbox, plus a small
@@ -65,11 +65,16 @@ and checks, with no check-in form.
     routine by weekday (normal: Mon, Tue, Wed, Fri, Sat; Thursday; Sunday)
     only into empty blocks inside the range. Default range 06:30-23:30 every
     day. A constant in code: templates do not return.
-20. **Motor de reglas y vista Winter Arc** - rules R1-R5 as pure functions over
-    tags and checks; day status (green, yellow, red, gray); "never fail twice
-    in a row" streak; weekly gym and applications pace (full weeks only). New
-    "Winter Arc" section with "Día X de 90", a 90-day grid with per-rule
-    detail, and % per rule.
+20. **Motor de reglas y vista Winter Arc** - built in three steps. 20a: tag
+    and routine adjustments (APPLY -> JOB_HUNTING; INTERVIEW, LINKEDIN and BED
+    removed; Job
+    Applying, Protein shake and SCREENS_OFF blocks in the default routine).
+    20b: pure rule engine. Daily: DEEP (Mon-Sat, 8 checked blocks in runs of
+    2+) and SCREENS_OFF (every day, 2+ checked blocks). Weekly, full weeks
+    only (Mon-Sun): GYM (5 days), WALK (2 days), JOB_HUNTING (4+ blocks).
+    Day status green/yellow/red/gray, "never fail twice in a row" streak,
+    arc start 2026-10-03, 90 days. 20c: the "Winter Arc" view with "Día X de
+    90", streaks, current week, 90-day grid and % per rule.
 21. **API de lectura** - read-only `GET /api/days?from&to` (days with blocks,
     tags and misc tasks, max 120 days) and `GET /api/arc/stats` (same
     calculation as the Winter Arc view).
@@ -98,8 +103,9 @@ and checks, with no check-in form.
   `dailyPlanId`
 - `activity` (string, may be empty) - free-text activity
 - `completed` (bool, default false) - whether the block was done
-- `tag` (enum `BlockTag`, nullable) - `DEEP | LINKEDIN | GYM | WALK | PROTEIN |
-  APPLY | INTERVIEW | SCREENS_OFF | BED`; added in 18, existing blocks untagged
+- `tag` (enum `BlockTag`, nullable) - `DEEP | LINKEDIN | GYM | WALK | PROTEIN | APPLY | INTERVIEW |
+  SCREENS_OFF | BED`; added in 18. 20a renames APPLY to JOB_HUNTING and
+  removes INTERVIEW, LINKEDIN and BED.
 
 > Winter Arc adds no tables: its state is derived from `DailyPlan` + `Block`;
 > the default blocks of 19 are a code constant.
@@ -162,7 +168,4 @@ Design reference: `blueprint/reference/planificacion-por-bloques.png`.
   and 7 are out of date.
 - Feature 12 still says the default range is 07:30-18:00; the real default
   is 06:30-23:30 (feature 19).
-- Rules R1-R5, the day-status thresholds, the weekly paces and the Winter Arc
-  start date are not defined in either plan. Feature 20 needs them before it
-  can be specified. Gym rest days are Thursday and Sunday (decided in 19).
 - The Winter Arc route and its nav label are not specified.

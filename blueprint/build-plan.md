@@ -64,12 +64,34 @@
       miércoles, viernes y sábado; jueves; domingo) solo en bloques vacíos que
       caen dentro del rango. Rango por defecto 06:30–23:30 todos los días. Es
       una constante en código: no vuelven las plantillas.
-- [ ] 20. Motor de reglas y vista Winter Arc — reglas R1–R5 evaluadas con
-      funciones puras a partir de etiquetas y checks; estado del día (verde,
-      amarillo, rojo, gris), racha "nunca fallar dos veces seguidas" y ritmo
-      semanal de gym y postulaciones (solo en semanas completas); nueva
-      sección "Winter Arc" con "Día X de 90", grilla de 90 días con detalle
-      por regla y % por regla.
+- [ ] 20. Motor de reglas y vista Winter Arc — ajustar etiquetas y rutina,
+      evaluar las reglas con funciones puras y mostrarlas en una sección nueva.
+      Se construye en tres pasos (20a–20c).
+    - [x] 20a. Etiquetas y rutina del Winter Arc — la etiqueta APPLY pasa a
+          JOB_HUNTING ("Job Hunting") y se quitan INTERVIEW, LINKEDIN y BED
+          (migración que conserva los datos: los bloques con una etiqueta
+          quitada quedan sin etiqueta).
+          La rutina por defecto suma "Job Applying" (etiqueta Job Hunting) a
+          las 17:00 y 17:30 de los días normales, "Protein shake" (etiqueta
+          PROTEIN) a las 18:00 el jueves y el domingo, y la etiqueta
+          SCREENS_OFF en la lectura nocturna (22:00–23:00, todos los días).
+    - [ ] 20b. Motor de reglas — funciones puras con tests, sin interfaz.
+          Diarias: DEEP (lunes a sábado: 8 bloques DEEP con check, solo
+          cuentan tramos de 2 bloques seguidos o más; un bloque sin check
+          corta el tramo) y SCREENS_OFF (todos los días: al menos 2 bloques
+          con check). Semanales (lunes a domingo, solo semanas completas):
+          GYM (5 días con todos sus bloques GYM con check; el domingo sirve
+          para recuperar), WALK (2 días con todos sus bloques WALK con
+          check) y JOB_HUNTING (al menos 4 bloques con check). Estado del
+          día: verde si cumple todas las diarias que le aplican, amarillo si
+          cumple algunas, rojo si ninguna; gris para hoy, días futuros y días
+          antes del reto; un día pasado del reto sin plan es rojo. Racha
+          "nunca fallar dos veces seguidas": cuentan verdes y amarillos, un
+          rojo aislado no suma ni corta, dos rojos seguidos la reinician y
+          hoy pendiente no la corta. Inicio del reto 2026-10-03, 90 días.
+    - [ ] 20c. Vista Winter Arc — nueva sección con "Día X de 90", rachas,
+          semana actual con el ritmo de gym, paseos y postulaciones, grilla de
+          90 días con detalle por regla y % por regla.
 - [ ] 21. API de lectura — `GET /api/days?from&to` (días con bloques,
       etiquetas y tareas varias, máximo 120 días) y `GET /api/arc/stats` (el
       mismo cálculo de la vista Winter Arc). Solo lectura.

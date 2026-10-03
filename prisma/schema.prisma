@@ -24,14 +24,11 @@ model DailyPlan {
 
 enum BlockTag {
   DEEP
-  LINKEDIN
   GYM
   WALK
   PROTEIN
-  APPLY
-  INTERVIEW
+  JOB_HUNTING
   SCREENS_OFF
-  BED
 }
 
 model Block {

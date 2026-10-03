@@ -20,7 +20,14 @@ describe("getDefaultBlocks", () => {
       expect(routine.get("14:30")).toEqual({ activity: "Gym", tag: "GYM" });
       expect(routine.get("15:30")).toEqual({ activity: "Gym", tag: "GYM" });
       expect(routine.get("16:00")).toBeUndefined();
-      expect(routine.get("23:30")).toEqual({ activity: "Sleep", tag: "BED" });
+      expect(routine.get("23:30")).toEqual({ activity: "Sleep", tag: null });
+      expect(routine.get("17:00")).toEqual({
+        activity: "Job Applying",
+        tag: "JOB_HUNTING",
+      });
+      expect(routine.get("17:30")?.activity).toBe("Job Applying");
+      expect(routine.get("18:00")?.activity).toBe("Rest / Reading");
+      expect(routine.get("18:30")?.activity).toBe("Rest / Reading");
     }
   });
 
@@ -29,8 +36,12 @@ describe("getDefaultBlocks", () => {
     expect(activities(THURSDAY)).not.toContain("Gym");
     expect(routine.get("17:00")).toEqual({ activity: "Walk Bonnie", tag: "WALK" });
     expect(routine.get("17:30")).toEqual({ activity: "Walk Bonnie", tag: "WALK" });
-    expect(routine.get("18:00")?.activity).toBe("Home");
-    expect(routine.get("18:30")?.activity).toBe("Bath routine");
+    expect(routine.get("18:00")).toEqual({
+      activity: "Protein shake",
+      tag: "PROTEIN",
+    });
+    expect(routine.get("18:30")?.activity).toBe("Home / Bath routine");
+    expect(activities(THURSDAY)).not.toContain("Job Applying");
     expect(routine.has("09:30")).toBe(false);
   });
 
@@ -40,7 +51,21 @@ describe("getDefaultBlocks", () => {
     expect(routine.get("10:00")?.activity).toBe("Clean Room");
     expect(activities(SUNDAY)).not.toContain("Gym");
     expect(routine.get("17:00")?.tag).toBe("WALK");
+    expect(routine.get("18:00")?.activity).toBe("Protein shake");
+    expect(activities(SUNDAY)).not.toContain("Job Applying");
     expect(routine.get("06:30")?.activity).toBe("Wake up");
+  });
+
+  it("tags the night reading as SCREENS_OFF every day", () => {
+    for (const n of [0, 1, 4]) {
+      const routine = getDefaultBlocks(day(n));
+      for (const time of ["22:00", "22:30", "23:00"]) {
+        expect(routine.get(time)).toEqual({
+          activity: "Supplements / Reading / Brush Teeth",
+          tag: "SCREENS_OFF",
+        });
+      }
+    }
   });
 
   it("only uses valid times, tags and activity lengths", () => {

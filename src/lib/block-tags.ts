@@ -3,26 +3,20 @@
 
 export const BLOCK_TAGS = [
   "DEEP",
-  "LINKEDIN",
   "GYM",
   "WALK",
   "PROTEIN",
-  "APPLY",
-  "INTERVIEW",
+  "JOB_HUNTING",
   "SCREENS_OFF",
-  "BED",
 ] as const;
 
 export type BlockTag = (typeof BLOCK_TAGS)[number];
 
 export const BLOCK_TAG_LABELS: Record<BlockTag, string> = {
   DEEP: "Deep",
-  LINKEDIN: "LinkedIn",
   GYM: "Gym",
   WALK: "Caminata",
   PROTEIN: "Proteína",
-  APPLY: "Postular",
-  INTERVIEW: "Entrevista",
+  JOB_HUNTING: "Job Hunting",
   SCREENS_OFF: "Pantallas",
-  BED: "Cama",
 };
