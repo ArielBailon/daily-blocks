@@ -64,7 +64,7 @@
       miércoles, viernes y sábado; jueves; domingo) solo en bloques vacíos que
       caen dentro del rango. Rango por defecto 06:30–23:30 todos los días. Es
       una constante en código: no vuelven las plantillas.
-- [ ] 20. Motor de reglas y vista Winter Arc — ajustar etiquetas y rutina,
+- [x] 20. Motor de reglas y vista Winter Arc — ajustar etiquetas y rutina,
       evaluar las reglas con funciones puras y mostrarlas en una sección nueva.
       Se construye en tres pasos (20a–20c).
     - [x] 20a. Etiquetas y rutina del Winter Arc — la etiqueta APPLY pasa a
@@ -89,7 +89,7 @@
           "nunca fallar dos veces seguidas": cuentan verdes y amarillos, un
           rojo aislado no suma ni corta, dos rojos seguidos la reinician y
           hoy pendiente no la corta. Inicio del reto 2026-10-03, 90 días.
-    - [ ] 20c. Vista Winter Arc — nueva sección con "Día X de 90", rachas,
+    - [x] 20c. Vista Winter Arc — nueva sección con "Día X de 90", rachas,
           semana actual con el ritmo de gym, paseos y postulaciones, grilla de
           90 días con detalle por regla y % por regla.
 - [ ] 21. API de lectura — `GET /api/days?from&to` (días con bloques,

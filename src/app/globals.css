@@ -10,6 +10,10 @@
   --accent: #e08654;
   /* Dark text on accent fills: white on this orange is only ~2.7:1. */
   --accent-foreground: #1a1410;
+  /* Winter Arc day status fills; dark text (accent-foreground) sits on top. */
+  --status-green: #7bb58a;
+  --status-yellow: #d9b44a;
+  --status-red: #d9776b;
 }
 
 @theme inline {
@@ -19,6 +23,9 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-status-green: var(--status-green);
+  --color-status-yellow: var(--status-yellow);
+  --color-status-red: var(--status-red);
 }
 
 body {
