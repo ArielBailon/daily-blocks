@@ -10,7 +10,7 @@ Uso personal (Ariel). Un solo usuario, sin multi-tenancy ni roles por ahora.
 ## 3. Funcionalidades (MVP)
 - Vista "Hoy" como planificación por bloques: elegir la fecha (hoy o una
   futura, por defecto hoy) y el rango del día (inicio y fin, solo :00 o :30,
-  por defecto 06:30 a 21:00). "Generar día" crea bloques de 30 minutos
+  por defecto 06:30 a 23:30). "Generar día" crea bloques de 30 minutos
   desde el inicio hasta el fin, ambos incluidos (el último bloque empieza a
   la hora fin), conservando lo ya escrito; pide confirmación antes de borrar bloques con
   texto que quedan fuera del rango. "Vaciar" limpia el día tras confirmar.
@@ -28,7 +28,7 @@ Uso personal (Ariel). Un solo usuario, sin multi-tenancy ni roles por ahora.
 
 ## 4. Datos
 - **DailyPlan**: id, fecha (única por día), cerrado (bool), hora de inicio y
-  hora de fin (HH:MM; por defecto 06:30 y 21:00), tareas varias (lista
+  hora de fin (HH:MM; por defecto 06:30 y 23:30), tareas varias (lista
   ordenada de textos, vacía por defecto).
 - **Block**: id, dailyPlanId, hora de inicio (HH:MM, única dentro de su día),
   actividad (texto, puede estar vacía), completado (bool).

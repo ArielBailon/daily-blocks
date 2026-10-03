@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildBlockTimes } from "@/lib/blocks";
+import { getDefaultBlocks, planDefaultContent } from "@/lib/default-blocks";
 
 const blocksInOrder = { blocks: { orderBy: { startTime: "asc" as const } } };
 
@@ -13,9 +14,10 @@ export type GenerateDayResult =
   | { kind: "needs-confirmation"; count: number }
   | { kind: "closed" };
 
-// Creates the day's blocks for [startTime, endTime]. Blocks already inside the
-// range are kept as they are; blocks outside it are deleted, but blocks with
-// content (activity, check, or tag) are only deleted when confirmRemoval is true.
+// Creates the day's blocks for [startTime, endTime], preloading the weekday's
+// default routine. Blocks already inside the range are kept as they are (empty
+// ones get the routine); blocks outside it are deleted, but blocks with content
+// (activity, check, or tag) are only deleted when confirmRemoval is true.
 export async function generateDay(input: {
   date: Date;
   startTime: string;
@@ -49,10 +51,18 @@ export async function generateDay(input: {
           where: { id: { in: outside.map((b) => b.id) } },
         });
       }
+      const { create, fill } = planDefaultContent(
+        wanted,
+        plan.blocks,
+        getDefaultBlocks(date)
+      );
       await tx.block.createMany({
-        data: wanted.map((time) => ({ dailyPlanId: plan.id, startTime: time })),
+        data: create.map((b) => ({ ...b, dailyPlanId: plan.id })),
         skipDuplicates: true,
       });
+      for (const { id, activity, tag } of fill) {
+        await tx.block.update({ where: { id }, data: { activity, tag } });
+      }
       const updated = await tx.dailyPlan.update({
         where: { id: plan.id },
         data: { startTime, endTime },

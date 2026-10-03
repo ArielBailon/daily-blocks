@@ -59,11 +59,11 @@
       (DEEP, LINKEDIN, GYM, WALK, PROTEIN, APPLY, INTERVIEW, SCREENS_OFF, BED),
       elegida en "Hoy" con un selector compacto que se guarda solo; Historial
       la muestra en solo lectura. Migración aditiva, sin tocar lo existente.
-- [ ] 19. Bloques por defecto al generar el día — de lunes a sábado, "Generar
-      día" precarga los bloques fijos del Winter Arc (actividad + etiqueta)
-      solo en bloques vacíos que caen dentro del rango; los domingos no se
-      precarga nada. Rango por defecto 06:30–22:00 todos los días. Es una
-      constante en código: no vuelven las plantillas.
+- [x] 19. Bloques por defecto al generar el día — "Generar día" precarga una
+      rutina fija según el día de la semana (normal de lunes, martes,
+      miércoles, viernes y sábado; jueves; domingo) solo en bloques vacíos que
+      caen dentro del rango. Rango por defecto 06:30–23:30 todos los días. Es
+      una constante en código: no vuelven las plantillas.
 - [ ] 20. Motor de reglas y vista Winter Arc — reglas R1–R5 evaluadas con
       funciones puras a partir de etiquetas y checks; estado del día (verde,
       amarillo, rojo, gris), racha "nunca fallar dos veces seguidas" y ritmo

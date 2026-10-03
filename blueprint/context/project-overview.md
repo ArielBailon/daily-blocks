@@ -1,10 +1,10 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash 5e98c1028d67c7be57899a483665f20e0589549b2a741892923d502afe58f11e -->
+<!-- blueprint:source-hash 4be2815c97ad70de8e1cef0788f8f61c286a85dd96570a5652dba35d7c72b10f -->
 
 > A personal day planner that splits the day into 30-minute blocks, each with
-> a free-text activity and a completion checkbox, plus a small log of misc
-> tasks, and keeps an immutable, browsable history of each day.
+> a free-text activity, an optional tag and a completion checkbox, plus a small
+> log of misc tasks, and keeps an immutable, browsable history of each day.
 
 ## Problem
 
@@ -20,67 +20,61 @@ deployed URL; mobile is the primary surface for the daily view.
 
 ## Features
 
-Features 1-10 are built (the original template-based checklist). Features
-11-16 move the app to the block planner and then retire the template model.
-The headline is **"Hoy" as block planning (13)**. 17 makes the app
-installable on the phone.
-18-21 agregan el **Winter Arc**: un reto de 90 días que se mide solo con
-etiquetas y checks de bloques, sin formulario de check-in.
+Features 1-18 are built. 1-10 were the original template-based checklist;
+11-16 moved the app to the block planner and retired the template model. The
+headline is **"Hoy" as block planning (13)**. 17 made the app installable.
+18-21 add the **Winter Arc**: a 90-day challenge measured only from block tags
+and checks, with no check-in form.
 
-1. **Layout and navigation** - app shell with "Hoy", "Plantillas", "Historial".
-2. **Prisma data schema** - Template, TemplateTask, TemplateRecurrence,
-   DailyPlan, DailyTask on Postgres.
-3. **Template CRUD** - templates with an ordered task list.
-4. **Weekday recurrence** - assign a template to weekdays.
-5. **Default template** - used when a day has no recurrence.
-6. **Automatic daily plan generation** - "Hoy" creates the day's plan from the
-   matching template.
-7. **"Hoy" checklist view** - tasks with checkboxes, saved immediately.
+1. **Layout and navigation** - app shell with navigation.
+2. **Prisma data schema** - original models on Postgres.
+3. **Template CRUD** - *retired in 16.*
+4. **Weekday recurrence** - *retired in 16.*
+5. **Default template** - *retired in 16.*
+6. **Automatic daily plan generation** - *replaced by 13.*
+7. **"Hoy" checklist view** - *replaced by 13.*
 8. **Day close-out** - past days become an immutable snapshot and can't be
-   edited. *Still applies to the new model.*
-9. **Manual edit of today's plan** - add/remove a one-off task.
-10. **History view** - past days with % completed. *Replaced by 15.*
+   edited. *Still applies.*
+9. **Manual edit of today's plan** - *replaced by 13.*
+10. **History view** - *replaced by 15.*
 11. **Global dark theme** - near-black background, cards with a subtle border,
-    terracotta accent; serif headings, sans body text, across the whole app.
+    terracotta accent; serif headings, sans body text.
 12. **Block day model** - `DailyPlan` gains start/end time and a misc-tasks
-    list; new `Block` model. Additive migration; existing data untouched.
+    list; new `Block` model. Additive migration.
 13. **Block planning in "Hoy"** *(headline)* - pick the date (today or future)
-    and start/end (only `:00`/`:30`, default 06:30-21:00). "Generar día"
-    builds the 30-minute blocks from start to end, both included, while
-    keeping what's already written, and asks for confirmation before deleting
-    blocks with text that fall outside the new range. "Vaciar" clears the day after confirmation. Each block has a
-    free-text activity and a completion checkbox, auto-saved. On future days
-    the checkbox is disabled.
-14. **Tareas varias** - side panel to log the day's small tasks as a text
-    list (add/remove), auto-saved, no checkbox.
-15. **History by date** - pick a past date and see its blocks, checks, and
-    misc tasks read-only.
-16. **Retire templates and the old model** - remove the Plantillas section,
-    its routes, and template-based generation; drop Template, TemplateTask,
-    TemplateRecurrence, and DailyTask with their data.
-17. **Installable app (PWA)** - web app manifest (name, dark-theme colors,
-    icons) so the app can be installed on the phone and opened full screen
-    without browser chrome. Offline shows a simple "Sin conexión" screen;
-    no offline reading or editing.
-18. **Etiquetas de bloque** - `tag` opcional por bloque con un selector
-    compacto en "Hoy" que se guarda solo; indicador sutil en Hoy y en
-    Historial (solo lectura). Migración aditiva.
-19. **Bloques por defecto** - de lunes a sábado, "Generar día" precarga los
-    bloques de `DEFAULT_BLOCKS` (actividad + etiqueta) solo en bloques vacíos
-    y dentro del rango. Los domingos no se precarga nada. Rango por defecto
-    06:30-22:00 todos los días. Constante en código, sin modelo ni UI.
-20. **Motor de reglas y vista Winter Arc** - R1-R5 en funciones puras en
-    `src/lib/arc/`; estado del día a partir de R1, R3 y R5 (R1 no aplica el
-    domingo); racha "nunca fallar dos veces seguidas"; R2 y R4 semanales con
-    ritmo, evaluadas solo en semanas completas. `/arc` muestra "Día X de 90",
-    las rachas, la semana actual, la grilla de 90 días con detalle por regla
-    y el % por regla.
-21. **API de lectura** - `GET /api/days?from&to` (máximo 120 días) y
-    `GET /api/arc/stats`, reutilizando `src/lib/arc/`. Sin auth.
+    and start/end (only `:00`/`:30`). "Generar día" builds 30-minute blocks
+    from start to end, both included, keeping what's written, and confirms
+    before deleting blocks with text outside the range. "Vaciar" clears the
+    day after confirmation. Each block has a free-text activity and an
+    auto-saved checkbox, disabled on future days. Built as 13a (today's block
+    screen), 13b (edit blocks), 13c (date and Vaciar).
+14. **Tareas varias** - side panel for the day's small tasks as a text list
+    (add/remove), auto-saved, no checkbox.
+15. **History by date** - pick a past date and see its blocks, checks and misc
+    tasks read-only.
+16. **Retire templates and the old model** - remove Plantillas, its routes and
+    template-based generation; drop Template, TemplateTask,
+    TemplateRecurrence and DailyTask with their data.
+17. **Installable app (PWA)** - manifest (name, dark-theme colors, icons) to
+    install on the phone and open full screen. Offline shows a simple "Sin
+    conexión" screen; no offline reading or editing.
+18. **Etiquetas de bloque** - optional tag per block, chosen in "Hoy" with a
+    compact auto-saved selector; shown read-only in Historial. Additive
+    migration.
+19. **Bloques por defecto al generar el día** - "Generar día" preloads a fixed
+    routine by weekday (normal: Mon, Tue, Wed, Fri, Sat; Thursday; Sunday)
+    only into empty blocks inside the range. Default range 06:30-23:30 every
+    day. A constant in code: templates do not return.
+20. **Motor de reglas y vista Winter Arc** - rules R1-R5 as pure functions over
+    tags and checks; day status (green, yellow, red, gray); "never fail twice
+    in a row" streak; weekly gym and applications pace (full weeks only). New
+    "Winter Arc" section with "Día X de 90", a 90-day grid with per-rule
+    detail, and % per rule.
+21. **API de lectura** - read-only `GET /api/days?from&to` (days with blocks,
+    tags and misc tasks, max 120 days) and `GET /api/arc/stats` (same
+    calculation as the Winter Arc view).
 
 ## Data model
-
-Target model once 16 lands. Until then the legacy models below still exist.
 
 ### DailyPlan
 
@@ -88,15 +82,13 @@ Target model once 16 lands. Until then the legacy models below still exist.
 - `date` (date, unique) - one plan per calendar day
 - `closed` (bool, default false) - true once the day is past; closed days are
   read-only
-- `startTime` (string `HH:MM`, default `"06:30"`) - start of the day's range
-- `endTime` (string `HH:MM`, default `"21:00"`) - end of the day's range
-  (inclusive; blocks cover `[startTime, endTime]` in 30-minute steps, so the
-  last block starts at `endTime`)
+- `startTime` (string `HH:MM`) - start of the day's range
+- `endTime` (string `HH:MM`) - end of the range, inclusive: blocks cover
+  `[startTime, endTime]` in 30-minute steps, so the last block starts at
+  `endTime`
 - `miscTasks` (string list, default empty) - the "Tareas varias" log, in
   insertion order
 - has many `Block`
-- legacy until 16: `templateId` (nullable FK -> Template), has many
-  `DailyTask`
 
 ### Block
 
@@ -106,23 +98,16 @@ Target model once 16 lands. Until then the legacy models below still exist.
   `dailyPlanId`
 - `activity` (string, may be empty) - free-text activity
 - `completed` (bool, default false) - whether the block was done
-- `tag` (enum `BlockTag`, nullable) - `DEEP | LINKEDIN | GYM | WALK |
-  PROTEIN | APPLY | INTERVIEW | SCREENS_OFF | BED`. Se agrega en 18; los
-  bloques existentes quedan sin etiqueta.
+- `tag` (enum `BlockTag`, nullable) - `DEEP | LINKEDIN | GYM | WALK | PROTEIN |
+  APPLY | INTERVIEW | SCREENS_OFF | BED`; added in 18, existing blocks untagged
 
-> Winter Arc no agrega tablas: todo su estado se deriva de `DailyPlan` +
-> `Block`, y la configuración (inicio, `DEFAULT_BLOCKS`, constantes) vive en
-> `src/lib/arc/config.ts`.
-
-### Legacy (removed in 16)
-
-- `Template` (name, isDefault, createdAt), `TemplateTask` (title, optional
-  suggestedTime, order), `TemplateRecurrence` (weekday 0-6 as primary key ->
-  template), `DailyTask` (title, suggestedTime, completed, completedAt, order).
-  Their data is deleted, not migrated.
-
-> `DailyPlan` and `Block` are the day's source of truth. Once `closed` is
-> true they are an immutable snapshot that history (15) reads.
+> Winter Arc adds no tables: its state is derived from `DailyPlan` + `Block`;
+> the default blocks of 19 are a code constant.
+>
+> `DailyPlan` and `Block` are the day's source of truth. Once `closed` is true
+> they are an immutable snapshot that history (15) and the Winter Arc (20, 21)
+> read. Template, TemplateTask, TemplateRecurrence and DailyTask were dropped
+> in 16.
 
 ## Tech stack
 
@@ -145,13 +130,14 @@ work well on a narrow mobile viewport.
 
 Design reference: `blueprint/reference/planificacion-por-bloques.png`.
 
-- `/` (Hoy) - title and short description; a form with date, start, and end,
+- `/` (Hoy) - title and short description; a form with date, start and end,
   plus "Generar día" and "Vaciar"; a grid with one row per block: 24-hour time
-  (on-the-hour bold, half-hours muted), the activity, and a completion
-  checkbox; a "Tareas varias" side panel with "+ Añadir tarea"; a footer
-  saying "Se guarda automáticamente".
+  (on-the-hour bold, half-hours muted), the activity, a tag selector and a
+  completion checkbox; a "Tareas varias" side panel with "+ Añadir tarea"; a
+  footer saying "Se guarda automáticamente".
 - `/historial` - pick a past date and see that day read-only.
-- Navigation: Hoy, Historial y Winter Arc (`/arc`, 20). Plantillas is removed in 16.
+- Winter Arc section (20) - route not specified in the plans.
+- Navigation: Hoy, Historial, and Winter Arc once 20 lands.
 - Installable as a PWA (17): home-screen icon, opens full screen. Offline
   shows only a "Sin conexión" screen; no offline data.
 
@@ -161,7 +147,22 @@ Design reference: `blueprint/reference/planificacion-por-bloques.png`.
 - **Database:** Prisma Postgres, free tier, via Vercel Storage, connected with
   `DATABASE_URL`.
 - **Env vars:** `DATABASE_URL`.
+- **Build:** `npm run vercel-build` (runs `prisma migrate deploy`, then
+  `next build`), per AGENTS.md.
 - **PWA:** installation requires HTTPS, which the Vercel URL provides.
 
-> TODO: build/start commands, migration step on deploy, health checks, and
-> domain are not decided; revisit in `/release`.
+> TODO: health checks and domain are not decided; revisit in `/release`.
+
+## Open questions
+
+> Resolve these in the plans, then re-run /overview.
+
+- `project-plan.md` never mentions the Winter Arc, tags, default blocks or the
+  read API (features 18-21 exist only in `build-plan.md`). Its section 3, 4
+  and 7 are out of date.
+- Feature 12 still says the default range is 07:30-18:00; the real default
+  is 06:30-23:30 (feature 19).
+- Rules R1-R5, the day-status thresholds, the weekly paces and the Winter Arc
+  start date are not defined in either plan. Feature 20 needs them before it
+  can be specified. Gym rest days are Thursday and Sunday (decided in 19).
+- The Winter Arc route and its nav label are not specified.
