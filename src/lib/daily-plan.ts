@@ -9,6 +9,15 @@ export function getDayPlan(date: Date) {
   return prisma.dailyPlan.findUnique({ where: { date }, include: blocksInOrder });
 }
 
+// Plans with a date in [from, to], oldest first. Days without a plan are absent.
+export function getDayPlansInRange(from: Date, to: Date) {
+  return prisma.dailyPlan.findMany({
+    where: { date: { gte: from, lte: to } },
+    orderBy: { date: "asc" },
+    include: blocksInOrder,
+  });
+}
+
 export type GenerateDayResult =
   | { kind: "ok"; plan: NonNullable<Awaited<ReturnType<typeof getDayPlan>>> }
   | { kind: "needs-confirmation"; count: number }

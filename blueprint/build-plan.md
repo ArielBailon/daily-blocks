@@ -92,6 +92,6 @@
     - [x] 20c. Vista Winter Arc — nueva sección con "Día X de 90", rachas,
           semana actual con el ritmo de gym, paseos y postulaciones, grilla de
           90 días con detalle por regla y % por regla.
-- [ ] 21. API de lectura — `GET /api/days?from&to` (días con bloques,
+- [x] 21. API de lectura — `GET /api/days?from&to` (días con bloques,
       etiquetas y tareas varias, máximo 120 días) y `GET /api/arc/stats` (el
       mismo cálculo de la vista Winter Arc). Solo lectura.
