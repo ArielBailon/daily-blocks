@@ -32,9 +32,9 @@ const day = (date: string, ...blocks: ArcBlock[][]): ArcDayInput => ({
 });
 
 describe("evaluateDeep", () => {
-  it("passes with 8 checked blocks in one run", () => {
-    const result = evaluateDeep(day(MONDAY, run("DEEP", "09:00", 8)));
-    expect(result).toMatchObject({ applicable: true, passed: true, value: 8 });
+  it("passes with 7 checked blocks in one run", () => {
+    const result = evaluateDeep(day(MONDAY, run("DEEP", "09:00", 7)));
+    expect(result).toMatchObject({ applicable: true, passed: true, value: 7 });
   });
 
   it("passes with 4 + 4 in two runs", () => {
@@ -50,19 +50,19 @@ describe("evaluateDeep", () => {
       day(
         MONDAY,
         run("DEEP", "09:00", 4),
-        run("DEEP", "13:00", 3),
+        run("DEEP", "13:00", 2),
         run("DEEP", "16:00", 1)
       )
     );
-    expect(result.value).toBe(7);
+    expect(result.value).toBe(6);
     expect(result.passed).toBe(false);
   });
 
   it("splits a run on an unchecked block", () => {
-    const blocks = run("DEEP", "09:00", 8);
+    const blocks = run("DEEP", "09:00", 7);
     blocks[3] = { ...blocks[3], completed: false };
     const result = evaluateDeep(day(MONDAY, blocks));
-    expect(result.value).toBe(7);
+    expect(result.value).toBe(6);
     expect(result.passed).toBe(false);
   });
 

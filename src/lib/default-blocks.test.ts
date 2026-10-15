@@ -17,9 +17,16 @@ describe("getDefaultBlocks", () => {
     for (const n of [1, 2, 3, 5, 6]) {
       const routine = getDefaultBlocks(day(n));
       expect(routine).toBe(getDefaultBlocks(MONDAY));
-      expect(routine.get("14:30")).toEqual({ activity: "Gym", tag: "GYM" });
-      expect(routine.get("15:30")).toEqual({ activity: "Gym", tag: "GYM" });
-      expect(routine.get("16:00")).toBeUndefined();
+      expect(routine.get("08:30")?.tag).toBeNull();
+      expect(routine.get("09:00")).toEqual({ activity: "", tag: "DEEP" });
+      expect(routine.get("12:30")).toEqual({ activity: "", tag: "DEEP" });
+      expect(routine.get("12:00")?.tag).toBe("DEEP");
+      expect(routine.get("13:00")).toEqual({ activity: "Lunch", tag: null });
+      expect(routine.get("13:30")).toEqual({ activity: "Lunch", tag: null });
+      expect(routine.get("14:00")).toBeUndefined();
+      for (const time of ["14:30", "15:00", "15:30", "16:00", "16:30"]) {
+        expect(routine.get(time)).toEqual({ activity: "Gym", tag: "GYM" });
+      }
       expect(routine.get("23:30")).toEqual({ activity: "Sleep", tag: null });
       expect(routine.get("17:00")).toEqual({
         activity: "Job Applying",
@@ -38,7 +45,7 @@ describe("getDefaultBlocks", () => {
     expect(routine.get("17:30")).toEqual({ activity: "Walk Bonnie", tag: "WALK" });
     expect(routine.get("18:00")).toEqual({
       activity: "Protein shake",
-      tag: "PROTEIN",
+      tag: null,
     });
     expect(routine.get("18:30")?.activity).toBe("Home / Bath routine");
     expect(activities(THURSDAY)).not.toContain("Job Applying");
@@ -72,7 +79,7 @@ describe("getDefaultBlocks", () => {
     for (const n of [0, 1, 4]) {
       for (const [time, block] of getDefaultBlocks(day(n))) {
         expect(time).toMatch(TIME_PATTERN);
-        expect(block.activity.length).toBeGreaterThan(0);
+        if (!block.tag) expect(block.activity.length).toBeGreaterThan(0);
         expect(block.activity.length).toBeLessThanOrEqual(200);
         if (block.tag) expect(BLOCK_TAGS).toContain(block.tag);
       }
@@ -93,8 +100,8 @@ describe("planDefaultContent", () => {
       { startTime: "07:00", activity: "Morning routine", tag: null },
       { startTime: "07:30", activity: "Morning routine", tag: null },
     ]);
-    const gap = planDefaultContent(["09:00"], [], routine).create;
-    expect(gap).toEqual([{ startTime: "09:00", activity: "", tag: null }]);
+    const gap = planDefaultContent(["14:00"], [], routine).create;
+    expect(gap).toEqual([{ startTime: "14:00", activity: "", tag: null }]);
   });
 
   it("does not create or fill anything outside the range", () => {

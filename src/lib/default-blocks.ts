@@ -41,6 +41,7 @@ const MORNING: Entry[] = [
 ];
 
 const LUNCH: Entry[] = [{ from: "12:30", to: "13:00", activity: "Lunch" }];
+const LATE_LUNCH: Entry[] = [{ from: "13:00", to: "13:30", activity: "Lunch" }];
 
 const EVENING: Entry[] = [
   { from: "19:00", activity: "Dinner" },
@@ -55,16 +56,16 @@ const EVENING: Entry[] = [
 
 const WALK_EVENING: Entry[] = [
   { from: "17:00", to: "17:30", activity: "Walk Bonnie", tag: "WALK" },
-  { from: "18:00", activity: "Protein shake", tag: "PROTEIN" },
+  { from: "18:00", activity: "Protein shake" },
   { from: "18:30", activity: "Home / Bath routine" },
 ];
 
 // Mon, Tue, Wed, Fri, Sat.
 const NORMAL_ROUTINE = buildRoutine([
   ...MORNING,
-  ...LUNCH,
-  { from: "14:30", to: "15:30", activity: "Gym", tag: "GYM" },
-  { from: "16:30", activity: "Home / Bath routine" },
+  { from: "09:00", to: "12:30", activity: "", tag: "DEEP" },
+  ...LATE_LUNCH,
+  { from: "14:30", to: "16:30", activity: "Gym", tag: "GYM" },
   { from: "17:00", to: "17:30", activity: "Job Applying", tag: "JOB_HUNTING" },
   { from: "18:00", to: "18:30", activity: "Rest / Reading" },
   ...EVENING,

@@ -4,7 +4,7 @@ export const ARC_START = "2026-10-03";
 export const ARC_DAYS = 90;
 
 // Daily rules.
-export const DEEP_BLOCKS_PER_DAY = 8;
+export const DEEP_BLOCKS_PER_DAY = 7;
 export const DEEP_MIN_RUN = 2;
 export const SCREENS_OFF_MIN_BLOCKS = 2;
 

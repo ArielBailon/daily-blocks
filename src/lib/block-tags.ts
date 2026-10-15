@@ -5,7 +5,6 @@ export const BLOCK_TAGS = [
   "DEEP",
   "GYM",
   "WALK",
-  "PROTEIN",
   "JOB_HUNTING",
   "SCREENS_OFF",
 ] as const;
@@ -16,7 +15,6 @@ export const BLOCK_TAG_LABELS: Record<BlockTag, string> = {
   DEEP: "Deep",
   GYM: "Gym",
   WALK: "Caminata",
-  PROTEIN: "Proteína",
   JOB_HUNTING: "Job Hunting",
   SCREENS_OFF: "Pantallas",
 };
