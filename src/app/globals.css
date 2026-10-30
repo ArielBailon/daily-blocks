@@ -14,6 +14,8 @@
   --status-green: #7bb58a;
   --status-yellow: #d9b44a;
   --status-red: #d9776b;
+  /* Personal records (trophy pills, PR highlights); dark text sits on top. */
+  --pr-gold: #e6b422;
 }
 
 @theme inline {
@@ -26,6 +28,7 @@
   --color-status-green: var(--status-green);
   --color-status-yellow: var(--status-yellow);
   --color-status-red: var(--status-red);
+  --color-pr-gold: var(--pr-gold);
 }
 
 body {

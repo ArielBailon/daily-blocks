@@ -21,6 +21,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#171512",
+  // Lets env(safe-area-inset-bottom) report the home-indicator inset in the installed app.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

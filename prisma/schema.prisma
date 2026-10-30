@@ -41,3 +41,152 @@ model Block {
 
   @@unique([dailyPlanId, startTime])
 }
+
+// Fitness module. Single-user app: no userId. Calendar dates are @db.Date
+// (UTC midnight of the America/Guayaquil day), same as DailyPlan.date.
+
+enum SessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  DISCARDED
+}
+
+enum MobilityType {
+  WARMUP
+  COOLDOWN
+}
+
+enum GoalPhase {
+  CUT
+  BULK
+}
+
+model MuscleGroup {
+  key     String @id
+  label   String
+  mev     Int
+  mavLow  Int
+  mavHigh Int
+}
+
+model Exercise {
+  id              Int     @id @default(autoincrement())
+  slug            String  @unique
+  name            String
+  // { muscleKey: 1 | 0.5 }, 1 = direct, 0.5 = indirect
+  muscles         Json
+  isElbowFriendly Boolean @default(true)
+  active          Boolean @default(true)
+
+  routineExercises RoutineExercise[]
+  sessionExercises SessionExercise[]
+}
+
+model RoutineDay {
+  id        Int    @id @default(autoincrement())
+  key       String @unique
+  label     String
+  subtitle  String
+  // 1 = Monday ... 7 = Sunday
+  dayOfWeek Int
+  order     Int
+
+  exercises RoutineExercise[]
+  mobility  RoutineDayMobility[]
+  sessions  WorkoutSession[]
+}
+
+model RoutineExercise {
+  id           Int        @id @default(autoincrement())
+  routineDayId Int
+  routineDay   RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  exerciseId   Int
+  exercise     Exercise   @relation(fields: [exerciseId], references: [id])
+  order        Int
+  sets         Int
+  reps         String
+  rir          Int
+  note         String?
+
+  @@unique([routineDayId, order])
+}
+
+model RoutineDayMobility {
+  id           Int          @id @default(autoincrement())
+  routineDayId Int
+  routineDay   RoutineDay   @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  type         MobilityType
+  order        Int
+  text         String
+
+  @@unique([routineDayId, type, order])
+}
+
+model WorkoutSession {
+  id              Int           @id @default(autoincrement())
+  routineDayId    Int?
+  routineDay      RoutineDay?   @relation(fields: [routineDayId], references: [id], onDelete: SetNull)
+  name            String
+  date            DateTime      @db.Date
+  status          SessionStatus @default(IN_PROGRESS)
+  startedAt       DateTime      @default(now())
+  finishedAt      DateTime?
+  durationMin     Int?
+  warmupChecked   Int[]         @default([])
+  cooldownChecked Int[]         @default([])
+
+  exercises SessionExercise[]
+
+  @@index([date])
+  @@index([status, date])
+}
+
+model SessionExercise {
+  id         Int            @id @default(autoincrement())
+  sessionId  Int
+  session    WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exerciseId Int
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id])
+  order      Int
+  // Snapshot of the routine target, e.g. "3 × 8 · RIR 2"
+  target     String
+  note       String?
+  isPR       Boolean        @default(false)
+  bestWeight Decimal?       @db.Decimal(6, 2)
+  bestReps   Int?
+
+  sets SetLog[]
+
+  @@index([exerciseId])
+  @@index([sessionId, order])
+}
+
+model SetLog {
+  id                Int             @id @default(autoincrement())
+  sessionExerciseId Int
+  sessionExercise   SessionExercise @relation(fields: [sessionExerciseId], references: [id], onDelete: Cascade)
+  setNumber         Int
+  // 0 = bodyweight
+  weightKg          Decimal?        @db.Decimal(6, 2)
+  reps              Int?
+  completed         Boolean         @default(false)
+  completedAt       DateTime?
+
+  @@unique([sessionExerciseId, setNumber])
+}
+
+model BodyWeightEntry {
+  id   Int      @id @default(autoincrement())
+  date DateTime @unique @db.Date
+  kg   Decimal  @db.Decimal(5, 2)
+}
+
+model FitnessGoal {
+  id                  Int       @id @default(autoincrement())
+  startKg             Decimal   @default(80) @db.Decimal(5, 2)
+  goalLowKg           Decimal   @default(69) @db.Decimal(5, 2)
+  goalHighKg          Decimal   @default(70) @db.Decimal(5, 2)
+  targetRateKgPerWeek Decimal   @default(0.5) @db.Decimal(4, 2)
+  phase               GoalPhase @default(CUT)
+  startedOn           DateTime  @db.Date
+}

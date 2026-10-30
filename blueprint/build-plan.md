@@ -95,3 +95,18 @@
 - [x] 21. API de lectura — `GET /api/days?from&to` (días con bloques,
       etiquetas y tareas varias, máximo 120 días) y `GET /api/arc/stats` (el
       mismo cálculo de la vista Winter Arc). Solo lectura.
+- [x] 22. Módulo Fitness - seguimiento de entrenamiento en `/fitness` (Dashboard,
+      Workout, History, Progress) y API de lectura `/api/v1/fitness/*`. Una
+      persona, sin auth ni `userId`. Fechas de calendario en America/Guayaquil.
+    - [x] 22a. Esquema y seed - modelos Prisma (catálogo, rutina, sesiones,
+          series, peso, meta), migración con índice único parcial para una sola
+          sesión IN_PROGRESS, y seed idempotente (`npm run db:seed`).
+    - [x] 22b. Lógica pura con tests - e1RM, PR, volumen semanal, racha,
+          proyección y semana lunes-domingo.
+    - [x] 22c. Shell del módulo - link en el NavBar, tabs superiores en desktop,
+          barra inferior en móvil, indicador de sesión en curso, token PR.
+    - [x] 22d. API interna - sesiones, peso corporal y meta, con zod.
+    - [x] 22e. Dashboard.
+    - [x] 22f. Workout - acordeón de rutina y sesión activa con auto-guardado.
+    - [x] 22g. History y Progress.
+    - [x] 22h. API de lectura `/api/v1/fitness/*` y `docs/fitness-api.md`.

@@ -7,6 +7,7 @@ const links = [
   { href: "/", label: "Hoy" },
   { href: "/historial", label: "Historial" },
   { href: "/winter-arc", label: "Winter Arc" },
+  { href: "/fitness", label: "Fitness" },
 ];
 
 export function NavBar() {
@@ -15,7 +16,8 @@ export function NavBar() {
   return (
     <nav className="flex justify-center gap-8 border-b border-muted px-4 py-4">
       {links.map(({ href, label }) => {
-        const active = pathname === href;
+        const active =
+          href === "/" ? pathname === "/" : pathname.startsWith(href);
         return (
           <Link
             key={href}
