@@ -1,7 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildBlockTimes } from "@/lib/blocks";
-import { getDefaultBlocks, planDefaultContent } from "@/lib/default-blocks";
+import { planDefaultContent, type Routine } from "@/lib/default-blocks";
 
 const blocksInOrder = { blocks: { orderBy: { startTime: "asc" as const } } };
 
@@ -23,8 +23,7 @@ export type GenerateDayResult =
   | { kind: "needs-confirmation"; count: number }
   | { kind: "closed" };
 
-// Creates the day's blocks for [startTime, endTime], preloading the weekday's
-// default routine. Blocks already inside the range are kept as they are (empty
+// Creates the day's blocks for [startTime, endTime], preloading `routine`. Blocks already inside the range are kept as they are (empty
 // ones get the routine); blocks outside it are deleted, but blocks with content
 // (activity, check, or tag) are only deleted when confirmRemoval is true.
 export async function generateDay(input: {
@@ -32,6 +31,7 @@ export async function generateDay(input: {
   startTime: string;
   endTime: string;
   confirmRemoval: boolean;
+  routine: Routine;
 }): Promise<GenerateDayResult> {
   const run = () =>
     prisma.$transaction(async (tx): Promise<GenerateDayResult> => {
@@ -63,7 +63,7 @@ export async function generateDay(input: {
       const { create, fill } = planDefaultContent(
         wanted,
         plan.blocks,
-        getDefaultBlocks(date)
+        input.routine
       );
       await tx.block.createMany({
         data: create.map((b) => ({ ...b, dailyPlanId: plan.id })),

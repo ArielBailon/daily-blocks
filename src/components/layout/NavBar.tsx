@@ -8,6 +8,7 @@ const links = [
   { href: "/historial", label: "Historial" },
   { href: "/winter-arc", label: "Winter Arc" },
   { href: "/fitness", label: "Fitness" },
+  { href: "/plantillas", label: "Plantillas" },
 ];
 
 export function NavBar() {

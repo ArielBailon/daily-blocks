@@ -11,6 +11,7 @@ export const generateDayInput = z
     startTime: blockTime,
     endTime: blockTime,
     confirmRemoval: z.boolean().optional(),
+    presetId: z.number().int().positive().optional(),
   })
   .refine((v) => toMinutes(v.startTime) < toMinutes(v.endTime), {
     message: "La hora de inicio debe ser menor que la de fin",

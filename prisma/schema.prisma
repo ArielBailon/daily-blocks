@@ -190,3 +190,13 @@ model FitnessGoal {
   phase               GoalPhase @default(CUT)
   startedOn           DateTime  @db.Date
 }
+
+// Routine presets that "Generar día" preloads into empty blocks. `blocks` is
+// [{ startTime: "HH:MM", activity, tag }]; times not listed stay empty.
+// Exactly one preset is the default (enforced in code, not in the database).
+model RoutinePreset {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  isDefault Boolean @default(false)
+  blocks    Json
+}

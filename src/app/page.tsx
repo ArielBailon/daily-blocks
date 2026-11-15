@@ -5,6 +5,7 @@ import { GenerateDayForm } from "@/components/hoy/GenerateDayForm";
 import { BlockRow } from "@/components/hoy/BlockRow";
 import { MiscTasksPanel } from "@/components/hoy/MiscTasksPanel";
 import { DEFAULT_END, DEFAULT_START } from "@/lib/default-blocks";
+import { listPresets } from "@/lib/presets";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export default async function HoyPage({
   }
 
   await closePastPlans(today);
-  const plan = await getDayPlan(date);
+  const [plan, presets] = await Promise.all([getDayPlan(date), listPresets()]);
   const blocks = plan?.blocks ?? [];
   const dateKey = toDateKey(date);
   const isFuture = date.getTime() > today.getTime();
@@ -44,6 +45,7 @@ export default async function HoyPage({
           hasBlocks={blocks.length > 0}
           initialStart={plan?.startTime ?? DEFAULT_START}
           initialEnd={plan?.endTime ?? DEFAULT_END}
+          presets={presets.map(({ id, name, isDefault }) => ({ id, name, isDefault }))}
         />
 
         <div className="flex flex-col gap-6 md:flex-row-reverse md:items-start">

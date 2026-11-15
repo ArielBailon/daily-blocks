@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { parseDateKey, resolveToday } from "@/lib/date";
 import { closePastPlans, generateDay } from "@/lib/daily-plan";
 import { generateDayInput } from "@/lib/validation/day";
+import { getPresetRoutine } from "@/lib/presets";
 
 export async function POST(
   request: Request,
@@ -36,12 +37,20 @@ export async function POST(
   }
 
   try {
+    const routine = await getPresetRoutine(parsed.data.presetId);
+    if (!routine) {
+      return NextResponse.json(
+        { error: "La plantilla elegida ya no existe" },
+        { status: 404 }
+      );
+    }
     await closePastPlans(today);
     const result = await generateDay({
       date,
       startTime: parsed.data.startTime,
       endTime: parsed.data.endTime,
       confirmRemoval: parsed.data.confirmRemoval === true,
+      routine,
     });
 
     if (result.kind === "closed") {

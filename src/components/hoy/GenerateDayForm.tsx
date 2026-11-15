@@ -12,16 +12,21 @@ export function GenerateDayForm({
   hasBlocks,
   initialStart,
   initialEnd,
+  presets,
 }: {
   dateKey: string;
   todayKey: string;
   hasBlocks: boolean;
   initialStart: string;
   initialEnd: string;
+  presets: { id: number; name: string; isDefault: boolean }[];
 }) {
   const router = useRouter();
   const [startTime, setStartTime] = useState(initialStart);
   const [endTime, setEndTime] = useState(initialEnd);
+  const [presetId, setPresetId] = useState(
+    (presets.find((p) => p.isDefault) ?? presets[0])?.id
+  );
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<"generate" | "clear" | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
@@ -35,7 +40,7 @@ export function GenerateDayForm({
     const res = await fetch(`/api/days/${dateKey}/generate`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ startTime, endTime, confirmRemoval }),
+      body: JSON.stringify({ startTime, endTime, confirmRemoval, presetId }),
     });
     if (res.ok) {
       router.refresh();
@@ -148,6 +153,29 @@ export function GenerateDayForm({
             className={FIELD_CLASS}
           />
         </div>
+        {presets.length > 0 && (
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="day-preset"
+              className="text-xs uppercase tracking-wide text-foreground/60"
+            >
+              Plantilla
+            </label>
+            <select
+              id="day-preset"
+              value={presetId}
+              onChange={(e) => setPresetId(Number(e.target.value))}
+              className={FIELD_CLASS}
+            >
+              {presets.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                  {p.isDefault ? " (predeterminada)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <button
           type="submit"
           disabled={pending !== null}
