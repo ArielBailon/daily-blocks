@@ -15,7 +15,8 @@ export type MuscleKey =
   | "aductores"
   | "pantorrilla"
   | "abdomen"
-  | "trapecio";
+  | "trapecio"
+  | "antebrazo";
 
 export type MuscleMap = Partial<Record<MuscleKey, 1 | 0.5>>;
 
@@ -40,6 +41,7 @@ export const MUSCLE_GROUPS: {
   { key: "pantorrilla", label: "Pantorrilla", mev: 8, mavLow: 12, mavHigh: 16 },
   { key: "abdomen", label: "Abdomen", mev: 0, mavLow: 16, mavHigh: 20 },
   { key: "trapecio", label: "Trapecio", mev: 0, mavLow: 12, mavHigh: 20 },
+  { key: "antebrazo", label: "Antebrazo", mev: 0, mavLow: 4, mavHigh: 8 },
 ];
 
 export type ExerciseSeed = {
@@ -56,6 +58,8 @@ export const EXERCISES: ExerciseSeed[] = [
   { slug: "aperturas-maquina", name: "Aperturas en máquina", muscles: { pecho: 1 } },
   { slug: "press-hombro-maquina", name: "Press de hombro en máquina", muscles: { deltFront: 1, deltLat: 0.5, triceps: 0.5 } },
   { slug: "elevaciones-laterales-maquina", name: "Elevaciones laterales en máquina", muscles: { deltLat: 1 } },
+  { slug: "antebrazo-polea-alta-neutro", name: "Antebrazo en polea alta, agarre neutro", muscles: { antebrazo: 1 } },
+  { slug: "curl-inverso-extension-muneca", name: "Curl inverso / extensión de muñeca", muscles: { antebrazo: 1 } },
   { slug: "jalon-triceps-unilateral-polea", name: "Jalón de tríceps unilateral en polea", muscles: { triceps: 1 } },
   { slug: "extension-triceps-tras-nuca-polea", name: "Extensión de tríceps tras nuca en polea (cuerda)", muscles: { triceps: 1 } },
   { slug: "elevaciones-piernas-l", name: "Elevaciones de piernas en L", muscles: { abdomen: 1 } },
@@ -128,7 +132,7 @@ export const ROUTINE: RoutineDaySeed[] = [
       { slug: "press-plano-mancuernas", sets: 3, reps: "8", rir: 2 },
       { slug: "aperturas-maquina", sets: 3, reps: "8", rir: 1 },
       { slug: "press-hombro-maquina", sets: 3, reps: "8", rir: 2 },
-      { slug: "elevaciones-laterales-maquina", sets: 5, reps: "12", rir: 1 },
+      { slug: "elevaciones-laterales-maquina", sets: 4, reps: "12", rir: 1 },
       { slug: "jalon-triceps-unilateral-polea", sets: 3, reps: "10", rir: 2, note: "+ isométrico de 30 s al final de cada serie" },
       { slug: "extension-triceps-tras-nuca-polea", sets: 3, reps: "12–15", rir: 3, note: "Sustituye al rompecráneos. Excéntrica de 3 s, sin rebote abajo. Si molesta el codo, cambia a extensión en máquina." },
       { slug: "elevaciones-piernas-l", sets: 3, reps: "10", rir: 1 },
@@ -150,7 +154,7 @@ export const ROUTINE: RoutineDaySeed[] = [
   {
     key: "pull",
     label: "Mar · Pull",
-    subtitle: "Espalda · bíceps · laterales",
+    subtitle: "Espalda · bíceps · antebrazo",
     dayOfWeek: 2,
     exercises: [
       { slug: "dominadas", sets: 3, reps: "6", rir: 2, note: "Si logras 3×8 limpias, añade lastre" },
@@ -160,8 +164,8 @@ export const ROUTINE: RoutineDaySeed[] = [
       { slug: "pec-deck-inverso", sets: 3, reps: "12–15", rir: 1 },
       { slug: "curl-bayesiano-polea", sets: 3, reps: "10", rir: 1 },
       { slug: "curl-martillo-mancuernas", sets: 3, reps: "10", rir: 1, note: "También trabaja antebrazo" },
-      { slug: "encogimientos-barra", sets: 3, reps: "10", rir: 1 },
-      { slug: "elevaciones-laterales-maquina", sets: 5, reps: "12", rir: 1 },
+      { slug: "antebrazo-polea-alta-neutro", sets: 3, reps: "12–15", rir: 2, note: "Excéntrica de 2–3 s; carga ligera, prioriza la técnica" },
+      { slug: "curl-inverso-extension-muneca", sets: 3, reps: "12–15", rir: 2, note: "Braquiorradial y extensores de los dedos. Excéntrica de 2–3 s; carga ligera, prioriza la técnica" },
     ],
     warmup: [
       "5 min remo ergómetro o elíptica",
@@ -189,6 +193,7 @@ export const ROUTINE: RoutineDaySeed[] = [
       { slug: "curl-femoral-sentado", sets: 3, reps: "12", rir: 1 },
       { slug: "aduccion-cadera-maquina", sets: 3, reps: "10", rir: 1 },
       { slug: "elevacion-talones-de-pie", sets: 6, reps: "12", rir: 1, note: "Pausa de 1 s abajo, en estiramiento" },
+      { slug: "elevaciones-laterales-maquina", sets: 4, reps: "12", rir: 1 },
       { slug: "hiperextensiones-banco-45", sets: 3, reps: "8", rir: 2 },
       { slug: "elevaciones-piernas-l", sets: 3, reps: "10", rir: 1 },
       { slug: "crunch-polea-arrodillado", sets: 3, reps: "12", rir: 1 },
@@ -219,8 +224,9 @@ export const ROUTINE: RoutineDaySeed[] = [
       { slug: "remo-en-t", sets: 3, reps: "8", rir: 2 },
       { slug: "aperturas-maquina", sets: 3, reps: "10–12", rir: 1 },
       { slug: "jalon-unilateral-arrodillado-polea", sets: 3, reps: "10", rir: 1 },
-      { slug: "elevaciones-laterales-maquina", sets: 6, reps: "12–15", rir: 1 },
+      { slug: "elevaciones-laterales-maquina", sets: 4, reps: "12–15", rir: 1 },
       { slug: "face-pull-polea", sets: 3, reps: "12–15", rir: 1 },
+      { slug: "encogimientos-barra", sets: 3, reps: "10", rir: 1 },
       { slug: "curl-bayesiano-polea", sets: 3, reps: "10", rir: 1, note: "Superserie A1 con el tríceps" },
       { slug: "jalon-triceps-unilateral-polea", sets: 3, reps: "10", rir: 2, note: "Superserie A2 · + isométrico de 30 s" },
     ],
@@ -251,6 +257,7 @@ export const ROUTINE: RoutineDaySeed[] = [
       { slug: "extension-cuadriceps", sets: 3, reps: "12–15", rir: 1 },
       { slug: "abduccion-cadera-maquina", sets: 3, reps: "12", rir: 1 },
       { slug: "elevacion-talones-sentado", sets: 6, reps: "15", rir: 1 },
+      { slug: "elevaciones-laterales-maquina", sets: 4, reps: "12", rir: 1 },
       { slug: "crunch-polea-arrodillado", sets: 4, reps: "12", rir: 1 },
       { slug: "elevaciones-piernas-l", sets: 3, reps: "10", rir: 1 },
     ],

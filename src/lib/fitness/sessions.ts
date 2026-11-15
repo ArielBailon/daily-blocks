@@ -50,6 +50,7 @@ export type SessionDto = {
   cooldown: string[];
   warmupChecked: number[];
   cooldownChecked: number[];
+  cardioDone: boolean;
   exercises: {
     id: number;
     exerciseId: number;
@@ -123,6 +124,7 @@ async function toDto(row: SessionRow): Promise<SessionDto> {
     cooldown: mobility.filter((m) => m.type === "COOLDOWN").map((m) => m.text),
     warmupChecked: row.warmupChecked,
     cooldownChecked: row.cooldownChecked,
+    cardioDone: row.cardioDone,
     exercises: row.exercises.map((e, i) => ({
       id: e.id,
       exerciseId: e.exerciseId,
@@ -234,13 +236,20 @@ export async function updateDraft(
     if (!session) return { ok: false, reason: "not-found" };
     if (session.status !== "IN_PROGRESS") return { ok: false, reason: "closed" };
 
-    if (input.warmupChecked || input.cooldownChecked) {
+    if (
+      input.warmupChecked ||
+      input.cooldownChecked ||
+      input.cardioDone !== undefined
+    ) {
       await tx.workoutSession.update({
         where: { id },
         data: {
           ...(input.warmupChecked && { warmupChecked: input.warmupChecked }),
           ...(input.cooldownChecked && {
             cooldownChecked: input.cooldownChecked,
+          }),
+          ...(input.cardioDone !== undefined && {
+            cardioDone: input.cardioDone,
           }),
         },
       });

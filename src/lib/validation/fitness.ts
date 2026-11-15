@@ -35,6 +35,7 @@ export const sessionUpdateInput = z
   .object({
     warmupChecked: checklist.optional(),
     cooldownChecked: checklist.optional(),
+    cardioDone: z.boolean("El cardio debe ser verdadero o falso").optional(),
     exercises: z
       .array(
         z.object({

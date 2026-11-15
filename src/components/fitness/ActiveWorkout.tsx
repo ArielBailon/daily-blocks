@@ -70,6 +70,7 @@ export function ActiveWorkout({
   const [exercises, setExercises] = useState(() => initial.exercises.map(toDraft));
   const [warmupChecked, setWarmupChecked] = useState(initial.warmupChecked);
   const [cooldownChecked, setCooldownChecked] = useState(initial.cooldownChecked);
+  const [cardioDone, setCardioDone] = useState(initial.cardioDone);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [adding, setAdding] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -94,6 +95,11 @@ export function ActiveWorkout({
   function changeCooldown(next: number[]) {
     setCooldownChecked(next);
     queue({ cooldownChecked: next });
+  }
+
+  function changeCardio(next: boolean) {
+    setCardioDone(next);
+    queue({ cardioDone: next });
   }
 
   async function removeExercise(exerciseId: number) {
@@ -230,7 +236,27 @@ export function ActiveWorkout({
             <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground/60">
               Cardio post-sesión
             </h2>
-            <p className="mt-1">20 min de caminata inclinada en zona 2</p>
+            <button
+              type="button"
+              role="checkbox"
+              aria-checked={cardioDone}
+              onClick={() => changeCardio(!cardioDone)}
+              className="flex min-h-11 w-full items-center gap-3 py-1 text-left"
+            >
+              <span
+                aria-hidden="true"
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border ${
+                  cardioDone
+                    ? "border-status-green bg-status-green text-accent-foreground"
+                    : "border-muted"
+                }`}
+              >
+                {cardioDone && "✓"}
+              </span>
+              <span className={cardioDone ? "text-foreground/50 line-through" : ""}>
+                20 min de caminata inclinada en zona 2
+              </span>
+            </button>
           </section>
 
           <section className="flex flex-col gap-3 rounded-xl border border-muted bg-surface p-4">

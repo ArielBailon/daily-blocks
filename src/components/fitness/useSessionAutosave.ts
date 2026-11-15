@@ -14,6 +14,7 @@ export type SetPayload = {
 type Pending = {
   warmupChecked?: number[];
   cooldownChecked?: number[];
+  cardioDone?: boolean;
   exercises?: Record<number, SetPayload[]>;
 };
 
@@ -25,6 +26,7 @@ function toBody(pending: Pending) {
   return {
     ...(pending.warmupChecked && { warmupChecked: pending.warmupChecked }),
     ...(pending.cooldownChecked && { cooldownChecked: pending.cooldownChecked }),
+    ...(pending.cardioDone !== undefined && { cardioDone: pending.cardioDone }),
     ...(pending.exercises && {
       exercises: Object.entries(pending.exercises).map(([id, sets]) => ({
         id: Number(id),
@@ -35,7 +37,10 @@ function toBody(pending: Pending) {
 }
 
 const isEmpty = (p: Pending) =>
-  !p.warmupChecked && !p.cooldownChecked && !p.exercises;
+  !p.warmupChecked &&
+  !p.cooldownChecked &&
+  p.cardioDone === undefined &&
+  !p.exercises;
 
 // Debounced, strictly serialized saves for one workout session: a slow response
 // can never overwrite a newer one, and a failed batch is retried with the next change.

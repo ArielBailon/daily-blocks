@@ -134,6 +134,7 @@ model WorkoutSession {
   durationMin     Int?
   warmupChecked   Int[]         @default([])
   cooldownChecked Int[]         @default([])
+  cardioDone      Boolean       @default(false)
 
   exercises SessionExercise[]
 
