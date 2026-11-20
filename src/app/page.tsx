@@ -6,6 +6,8 @@ import { BlockRow } from "@/components/hoy/BlockRow";
 import { MiscTasksPanel } from "@/components/hoy/MiscTasksPanel";
 import { DEFAULT_END, DEFAULT_START } from "@/lib/default-blocks";
 import { listPresets } from "@/lib/presets";
+import { FocusProvider } from "@/components/focus/FocusProvider";
+import { FocusBar } from "@/components/focus/FocusBar";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +36,15 @@ export default async function HoyPage({
   const isFuture = date.getTime() > today.getTime();
 
   return (
+    <FocusProvider
+      dateKey={dateKey}
+      blocks={blocks.map(({ id, startTime, activity, tag }) => ({
+        id,
+        startTime,
+        activity,
+        tag,
+      }))}
+    >
     <main className="flex flex-1 flex-col px-4 py-10 sm:px-6">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         <h1 className="text-3xl font-bold">Daily Blocks</h1>
@@ -75,6 +86,7 @@ export default async function HoyPage({
                       initialCompleted={block.completed}
                       initialTag={block.tag}
                       canComplete={!isFuture}
+                      canFocus={!isFuture}
                     />
                   ))}
                 </ol>
@@ -90,5 +102,7 @@ export default async function HoyPage({
         )}
       </div>
     </main>
+    <FocusBar />
+    </FocusProvider>
   );
 }

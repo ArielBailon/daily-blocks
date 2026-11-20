@@ -120,7 +120,7 @@
       (estado efectivo dado `now`, tiempo restante, cobertura, regla del 80%).
       Al pasar a descanso o terminar con al menos 80% del trabajo, los bloques
       cubiertos se marcan completados en la misma transacción.
-- [ ] 24. Timer de foco en Hoy - botón ▶ en cada bloque de hoy con selector de
+- [x] 24. Timer de foco en Hoy - botón ▶ en cada bloque de hoy con selector de
       preset (sugerido según etiqueta DEEP o bloques seguidos con la misma
       actividad), barra fija del timer activo (Pausar/Reanudar, Terminar,
       Abandonar), tiempo restante calculado como `workEndsAt - now` y sesión

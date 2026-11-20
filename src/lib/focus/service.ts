@@ -1,13 +1,15 @@
 import { Prisma, type FocusSession } from "@/generated/prisma/client";
 import { resolveToday } from "@/lib/date";
 import { prisma } from "@/lib/prisma";
-import {
-  blocksCovered,
-  FIXED_PRESETS,
-  type FocusPresetKey,
-} from "./config";
+import { blocksCovered, FIXED_PRESETS } from "./config";
 import * as machine from "./session";
 import type { SessionState } from "./session";
+import type {
+  CoverageInfo,
+  FocusAction,
+  FocusSessionDto,
+  StartRequest as StartInput,
+} from "./types";
 
 type Tx = Prisma.TransactionClient;
 
@@ -15,37 +17,13 @@ type Tx = Prisma.TransactionClient;
 const TX_OPTIONS = { timeout: 15_000 };
 const ACTIVE_STATUSES = ["WORKING", "PAUSED", "BREAK"] as const;
 
-export type FocusAction = "pause" | "resume" | "finish" | "abandon" | "skipBreak";
-
-export type FocusSessionDto = {
-  id: number;
-  status: FocusSession["status"];
-  preset: string;
-  blockIds: number[];
-  workMinutes: number;
-  breakMinutes: number;
-  startedAt: string;
-  workEndsAt: string;
-  breakEndsAt: string;
-  pausedAt: string | null;
-  breakSkipped: boolean;
-  actualWorkSeconds: number;
-  endedAt: string | null;
-  blocksMarked: boolean;
-  serverNow: string;
-};
-
 export type ServiceError = { ok: false; status: 400 | 404 | 409; error: string };
-
-export type StartInput =
-  | { blockId: number; preset: Exclude<FocusPresetKey, "CUSTOM"> }
-  | { blockId: number; preset: "CUSTOM"; workMinutes: number; breakMinutes: number };
 
 export type StartResult =
   | {
       ok: true;
       session: FocusSessionDto;
-      coverage: { requested: number; covered: number; trimmed: boolean };
+      coverage: CoverageInfo;
     }
   | ServiceError;
 

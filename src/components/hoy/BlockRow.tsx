@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { isOnTheHour } from "@/lib/blocks";
 import { BLOCK_TAGS, BLOCK_TAG_LABELS, type BlockTag } from "@/lib/block-tags";
+import { useFocus } from "@/components/focus/FocusProvider";
+import { PresetPicker } from "@/components/focus/PresetPicker";
 
 const SAVE_DELAY_MS = 600;
 const OPTION_CLASS = "bg-surface text-left text-sm text-foreground";
@@ -21,6 +23,7 @@ export function BlockRow({
   initialCompleted,
   initialTag,
   canComplete,
+  canFocus,
 }: {
   dateKey: string;
   id: number;
@@ -29,11 +32,23 @@ export function BlockRow({
   initialCompleted: boolean;
   initialTag: BlockTag | null;
   canComplete: boolean;
+  canFocus: boolean;
 }) {
   const [activity, setActivity] = useState(initialActivity);
   const [completed, setCompleted] = useState(initialCompleted);
   const [tag, setTag] = useState(initialTag);
   const [error, setError] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const { loaded, session, busy, marks } = useFocus();
+
+  // A session marked this block on the server: show it without a reload, even
+  // if it was unchecked by hand before. Typing in the row is not affected.
+  const mark = marks[id] ?? 0;
+  const [seenMark, setSeenMark] = useState(mark);
+  if (mark !== seenMark) {
+    setSeenMark(mark);
+    setCompleted(true);
+  }
 
   const url = `/api/days/${dateKey}/blocks/${id}`;
   // Saves for one block run one at a time so a slow response can't overwrite a newer value.
@@ -133,6 +148,10 @@ export function BlockRow({
     save({ tag: next });
   }
 
+  useEffect(() => {
+    if (mark > 0) confirmed.current = { ...confirmed.current, completed: true };
+  }, [mark]);
+
   // Flush a save still waiting on the typing pause when the row goes away.
   useEffect(() => {
     return () => {
@@ -195,6 +214,23 @@ export function BlockRow({
             completed ? "text-foreground/50 line-through" : ""
           }`}
         />
+        {canFocus && (
+          <button
+            type="button"
+            aria-label={`Iniciar foco ${startTime}`}
+            title={
+              session ? "Ya hay una sesión de foco en curso" : "Iniciar foco"
+            }
+            disabled={!loaded || session !== null || busy}
+            onClick={() => setPickerOpen(true)}
+            className="flex h-12 w-12 shrink-0 items-center justify-center text-accent transition-colors enabled:hover:text-foreground disabled:opacity-30"
+          >
+            {/* An SVG, because the ▶ character renders as a colored emoji on some systems. */}
+            <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+        )}
         <label
           className={`flex h-12 w-12 shrink-0 items-center justify-center ${
             canComplete ? "cursor-pointer" : "cursor-not-allowed"
@@ -210,6 +246,9 @@ export function BlockRow({
           />
         </label>
       </div>
+      {pickerOpen && (
+        <PresetPicker blockId={id} onClose={() => setPickerOpen(false)} />
+      )}
       {error && (
         <p role="alert" className="px-3 pb-2 pl-23 text-xs text-accent">
           {error}
