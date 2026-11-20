@@ -1,6 +1,7 @@
 import type { ArcDayResult } from "@/lib/arc/summary";
 import { STATUS_LABELS } from "@/components/winter-arc/status";
 import { parseDateKey } from "@/lib/date";
+import { formatFocusMinutes, type FocusDaySummary } from "@/lib/focus/metrics";
 
 const dayFormat = new Intl.DateTimeFormat("es", {
   timeZone: "UTC",
@@ -14,7 +15,14 @@ const RULES = [
   { id: "SCREENS_OFF", label: "Pantallas" },
 ] as const;
 
-export function DayDetail({ day }: { day: ArcDayResult }) {
+export function DayDetail({
+  day,
+  focus,
+}: {
+  day: ArcDayResult;
+  focus: FocusDaySummary;
+}) {
+  const sessions = focus.completed + focus.abandoned;
   const date = parseDateKey(day.date);
   return (
     <section className="flex flex-col gap-3 rounded-xl border border-muted bg-surface p-4">
@@ -54,6 +62,24 @@ export function DayDetail({ day }: { day: ArcDayResult }) {
             </li>
           );
         })}
+        <li className="flex items-baseline justify-between gap-3">
+          <span>Foco</span>
+          <span className="tabular-nums">
+            {sessions === 0 ? (
+              <span className="text-foreground/60">Sin sesiones</span>
+            ) : (
+              <>
+                <span className="font-semibold">
+                  {formatFocusMinutes(focus.minutes)}
+                </span>
+                <span className="text-foreground/60">
+                  {" · "}
+                  {sessions} {sessions === 1 ? "sesión" : "sesiones"}
+                </span>
+              </>
+            )}
+          </span>
+        </li>
       </ul>
     </section>
   );

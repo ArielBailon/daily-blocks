@@ -131,7 +131,7 @@
       según la hora (America/Guayaquil), sesión activa con tiempo restante
       grande, siguiente bloque y ▶ para iniciar el actual. Screen Wake Lock
       mientras hay sesión activa, si el navegador lo soporta.
-- [ ] 26. Métricas de foco - en Historial, por día: minutos de foco reales,
+- [x] 26. Métricas de foco - en Historial, por día: minutos de foco reales,
       sesiones completadas/abandonadas y descansos saltados; en `/winter-arc`,
       minutos de foco por día y total de la semana actual; `GET /api/days`
       incluye las sesiones de cada día. Sin cambiar las reglas del arco.

@@ -1,4 +1,5 @@
 import type { WeekResult, WeeklyRuleId } from "@/lib/arc/rules";
+import { formatFocusMinutes } from "@/lib/focus/metrics";
 
 const RULES: { id: WeeklyRuleId; label: string }[] = [
   { id: "GYM", label: "Gym (días)" },
@@ -6,7 +7,13 @@ const RULES: { id: WeeklyRuleId; label: string }[] = [
   { id: "JOB_HUNTING", label: "Job Hunting (bloques)" },
 ];
 
-export function WeekPace({ week }: { week: WeekResult }) {
+export function WeekPace({
+  week,
+  focusMinutes,
+}: {
+  week: WeekResult;
+  focusMinutes: number;
+}) {
   return (
     <section className="flex flex-col gap-3 rounded-xl border border-muted bg-surface p-4">
       <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground/60">
@@ -22,6 +29,12 @@ export function WeekPace({ week }: { week: WeekResult }) {
             </span>
           </li>
         ))}
+        <li className="flex items-baseline justify-between gap-3">
+          <span>Foco</span>
+          <span className="font-semibold tabular-nums">
+            {formatFocusMinutes(focusMinutes)}
+          </span>
+        </li>
       </ul>
     </section>
   );

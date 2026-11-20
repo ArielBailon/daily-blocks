@@ -4,6 +4,9 @@ import { parseDateKey, resolveToday, toDateKey } from "@/lib/date";
 import { isOnTheHour } from "@/lib/blocks";
 import { BLOCK_TAG_LABELS } from "@/lib/block-tags";
 import { HistoryDatePicker } from "@/components/historial/HistoryDatePicker";
+import { FocusCard } from "@/components/historial/FocusCard";
+import { loadFocusSessionsByDay } from "@/lib/focus/load";
+import { summarizeFocus } from "@/lib/focus/metrics";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +42,12 @@ export default async function HistorialPage({
 
   await closePastPlans(today);
   const plan = date ? await getDayPlan(date) : null;
+  const focus =
+    date && plan
+      ? summarizeFocus(
+          (await loadFocusSessionsByDay(date, date))[toDateKey(date)] ?? []
+        )
+      : null;
 
   return (
     <main className="flex flex-1 flex-col px-4 py-10 sm:px-6">
@@ -66,7 +75,8 @@ export default async function HistorialPage({
               </p>
             ) : (
               <div className="flex flex-col gap-6 md:flex-row-reverse md:items-start">
-                <section className="flex flex-col gap-3 rounded-xl border border-muted bg-surface p-4 md:w-72 md:shrink-0">
+                <div className="flex flex-col gap-6 md:w-72 md:shrink-0">
+                <section className="flex flex-col gap-3 rounded-xl border border-muted bg-surface p-4">
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground/60">
                     Tareas varias
                   </h3>
@@ -82,6 +92,8 @@ export default async function HistorialPage({
                     </ul>
                   )}
                 </section>
+                {focus && <FocusCard summary={focus} />}
+                </div>
 
                 <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-muted bg-surface">
                   {plan.blocks.length === 0 ? (

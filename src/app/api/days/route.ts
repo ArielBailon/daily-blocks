@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { toDateKey } from "@/lib/date";
 import { getDayPlansInRange } from "@/lib/daily-plan";
 import { parseDayRange } from "@/lib/validation/day-range";
+import { focusSessionJson, loadFocusSessionsByDay } from "@/lib/focus/load";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,7 +12,10 @@ export async function GET(request: Request) {
   }
 
   try {
-    const plans = await getDayPlansInRange(range.from, range.to);
+    const [plans, sessions] = await Promise.all([
+      getDayPlansInRange(range.from, range.to),
+      loadFocusSessionsByDay(range.from, range.to),
+    ]);
     return NextResponse.json({
       days: plans.map((plan) => ({
         date: toDateKey(plan.date),
@@ -22,6 +26,7 @@ export async function GET(request: Request) {
           tag: b.tag,
         })),
         miscTasks: plan.miscTasks,
+        focusSessions: (sessions[toDateKey(plan.date)] ?? []).map(focusSessionJson),
       })),
     });
   } catch {

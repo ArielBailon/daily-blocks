@@ -1,7 +1,14 @@
 import { closePastPlans } from "@/lib/daily-plan";
-import { resolveToday, toDateKey } from "@/lib/date";
+import { parseDateKey, resolveToday, toDateKey } from "@/lib/date";
 import { ARC_DAYS, ARC_START } from "@/lib/arc/config";
 import { loadArcPlans } from "@/lib/arc/load";
+import { addDays, arcEnd } from "@/lib/arc/rules";
+import { loadFocusSessionsByDay } from "@/lib/focus/load";
+import {
+  emptyFocusSummary,
+  focusTotalForDays,
+  summarizeByDay,
+} from "@/lib/focus/metrics";
 import { computeArc } from "@/lib/arc/summary";
 import { arcProgress, currentWeek, parseDayParam } from "@/lib/arc/view";
 import { ArcGrid } from "@/components/winter-arc/ArcGrid";
@@ -24,6 +31,22 @@ export default async function WinterArcPage({
   const summary = computeArc(await loadArcPlans(), todayKey);
   const progress = arcProgress(todayKey);
   const week = currentWeek(summary, todayKey);
+
+  // The first arc week can begin before the arc, so load from its Monday.
+  const focusFrom = parseDateKey(
+    week && week.weekStart < ARC_START ? week.weekStart : ARC_START
+  );
+  const focusTo = parseDateKey(arcEnd());
+  const focusByDay =
+    focusFrom && focusTo
+      ? summarizeByDay(await loadFocusSessionsByDay(focusFrom, focusTo))
+      : {};
+  const weekFocusMinutes = week
+    ? focusTotalForDays(
+        focusByDay,
+        Array.from({ length: 7 }, (_, i) => addDays(week.weekStart, i))
+      )
+    : 0;
 
   const requested = parseDayParam(dia);
   const selected =
@@ -58,12 +81,17 @@ export default async function WinterArcPage({
         </section>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {week && <WeekPace week={week} />}
+          {week && <WeekPace week={week} focusMinutes={weekFocusMinutes} />}
           <RulePercentages rules={summary.rules} />
         </div>
 
         <ArcGrid days={summary.days} todayKey={todayKey} selected={selected} />
-        {detail && <DayDetail day={detail} />}
+        {detail && (
+          <DayDetail
+            day={detail}
+            focus={focusByDay[detail.date] ?? emptyFocusSummary()}
+          />
+        )}
       </div>
     </main>
   );
