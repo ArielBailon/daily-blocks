@@ -110,3 +110,28 @@
     - [x] 22f. Workout - acordeón de rutina y sesión activa con auto-guardado.
     - [x] 22g. History y Progress.
     - [x] 22h. API de lectura `/api/v1/fitness/*` y `docs/fitness-api.md`.
+- [x] 23. Sesiones de foco: modelo y API - modelo `FocusSession` (migración
+      aditiva) y rutas `POST /api/focus/sessions`, `GET /api/focus/active` y
+      `PATCH /api/focus/sessions/[id]` (pause, resume, finish, abandon,
+      skipBreak). Una sola sesión activa, timestamps decididos por el servidor,
+      solo bloques de hoy de un día abierto. Presets (Clásico 25/5, Deep 2
+      bloques 50/10, Deep 3 bloques 80/10, Personalizado) como constantes en
+      `src/lib/focus/config.ts`. Lógica pura con tests en `src/lib/focus/`
+      (estado efectivo dado `now`, tiempo restante, cobertura, regla del 80%).
+      Al pasar a descanso o terminar con al menos 80% del trabajo, los bloques
+      cubiertos se marcan completados en la misma transacción.
+- [ ] 24. Timer de foco en Hoy - botón ▶ en cada bloque de hoy con selector de
+      preset (sugerido según etiqueta DEEP o bloques seguidos con la misma
+      actividad), barra fija del timer activo (Pausar/Reanudar, Terminar,
+      Abandonar), tiempo restante calculado como `workEndsAt - now` y sesión
+      recuperada desde el servidor al cargar. Descanso obligatorio a pantalla
+      completa con "Saltar descanso" confirmado, sonido y vibración solo con la
+      app abierta, y bloques auto-marcados visibles sin recargar.
+- [ ] 25. Modo "Ahora" - ruta `/ahora` con entrada en el NavBar: bloque actual
+      según la hora (America/Guayaquil), sesión activa con tiempo restante
+      grande, siguiente bloque y ▶ para iniciar el actual. Screen Wake Lock
+      mientras hay sesión activa, si el navegador lo soporta.
+- [ ] 26. Métricas de foco - en Historial, por día: minutos de foco reales,
+      sesiones completadas/abandonadas y descansos saltados; en `/winter-arc`,
+      minutos de foco por día y total de la semana actual; `GET /api/days`
+      incluye las sesiones de cada día. Sin cambiar las reglas del arco.

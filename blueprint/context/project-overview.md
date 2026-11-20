@@ -1,6 +1,6 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash 32bff6577c70df25da1435e970f50633dc39a96b21038af2d608b63f62832d1c -->
+<!-- blueprint:source-hash 1194ec684c17074f2b3929bc148d9e3ddbd2ce9dcfee53c8e75d6b047c5eb20f -->
 
 > A personal day planner that splits the day into 30-minute blocks, each with
 > a free-text activity, an optional tag and a completion checkbox, plus a small
@@ -20,11 +20,13 @@ deployed URL; mobile is the primary surface for the daily view.
 
 ## Features
 
-Features 1-18 are built. 1-10 were the original template-based checklist;
-11-16 moved the app to the block planner and retired the template model. The
-headline is **"Hoy" as block planning (13)**. 17 made the app installable.
-18-21 add the **Winter Arc**: a 90-day challenge measured only from block tags
-and checks, with no check-in form.
+Features 1-22 are built; 23-26 are planned. 1-10 were the original
+template-based checklist; 11-16 moved the app to the block planner and retired
+the template model. The headline is **"Hoy" as block planning (13)**. 17 made
+the app installable. 18-21 add the **Winter Arc**: a 90-day challenge measured
+only from block tags and checks, with no check-in form. 22 adds Fitness. 23-26
+add the **Pomodoro**: focus sessions that live inside the blocks and mark them
+done automatically.
 
 1. **Layout and navigation** - app shell with navigation.
 2. **Prisma data schema** - original models on Postgres.
@@ -79,6 +81,41 @@ and checks, with no check-in form.
     tags and misc tasks, max 120 days) and `GET /api/arc/stats` (same
     calculation as the Winter Arc view).
 
+22. **Fitness** - workout tracking in `/fitness` (Dashboard, Workout, History,
+    Progress) and a read API under `/api/v1/fitness/*`; documented in
+    `docs/fitness-api.md`.
+23. **Sesiones de foco: modelo y API** - `FocusSession` model and
+    `POST /api/focus/sessions`, `GET /api/focus/active`,
+    `PATCH /api/focus/sessions/[id]` (pause, resume, finish, abandon,
+    skipBreak). One active session at a time; the server decides every
+    timestamp; only today's blocks of an open day. Presets are code constants in
+    `src/lib/focus/config.ts`: Clasico 25/5 (1 block), Deep 2 bloques 50/10
+    (2), Deep 3 bloques 80/10 (3), Personalizado (work 5-120, break 0-30,
+    covers `ceil((work + break) / 30)` blocks). Effective state, remaining
+    time, coverage and the 80% rule are pure functions with tests. Phase
+    changes are computed lazily from `now`, no background jobs. When work ends
+    (or on a manual finish) with at least 80% of the planned work done, the
+    covered blocks get `completed = true` in the same transaction, only if the
+    day is still open. Abandon marks nothing.
+24. **Timer de foco en Hoy** - a play button on each of today's blocks opens a
+    preset picker (suggested: Deep 2 bloques for a DEEP-tagged block, otherwise
+    by the run of consecutive blocks with the same activity). A fixed bar shows
+    phase, remaining time, covered blocks, Pausar/Reanudar, Terminar and
+    Abandonar. Remaining time is always `workEndsAt - now`; the interval only
+    repaints. The session is restored from the server on load. The break is a
+    full-screen countdown that disables the other play buttons; "Saltar
+    descanso" asks for confirmation and sets `breakSkipped`. Sound and
+    `navigator.vibrate` only while the app is open; auto-marked blocks show as
+    done without a reload. No push, Notification API or service worker changes.
+25. **Modo "Ahora"** - `/ahora` with a NavBar entry: the current block by time
+    (America/Guayaquil), the active session with large remaining time, the next
+    block and a play button for the current one. Screen Wake Lock while a
+    session is active, when supported. With no plan for today, a link to Hoy.
+26. **Metricas de foco** - Historial shows per day the real focus minutes,
+    completed/abandoned sessions and skipped breaks; `/winter-arc` shows focus
+    minutes per day and the current week total, without changing the arc rules;
+    `GET /api/days` includes each day's sessions.
+
 ## Data model
 
 ### DailyPlan
@@ -106,6 +143,24 @@ and checks, with no check-in form.
 - `tag` (enum `BlockTag`, nullable) - `DEEP | LINKEDIN | GYM | WALK | PROTEIN | APPLY | INTERVIEW |
   SCREENS_OFF | BED`; added in 18. 20a renames APPLY to JOB_HUNTING and
   removes INTERVIEW, LINKEDIN and BED.
+
+### FocusSession
+
+- `id` (int) - primary key
+- `dailyPlanId` (int) - FK -> DailyPlan
+- `blockIds` (int list) - the covered blocks
+- `preset` (string) - preset key used to start the session
+- `workMinutes`, `breakMinutes` (int) - planned durations
+- `startedAt`, `workEndsAt`, `breakEndsAt` (timestamps) - all set by the server
+- `pausedAt` (timestamp, nullable), `pausedSeconds` (int) - pausing shifts
+  `workEndsAt` and `breakEndsAt` by the paused time
+- `status` (enum `WORKING | PAUSED | BREAK | COMPLETED | ABANDONED`)
+- `breakSkipped` (bool, default false)
+- `actualWorkSeconds` (int)
+- `endedAt` (timestamp, nullable)
+
+Added in 23. At most one session is WORKING, PAUSED or BREAK at a time,
+validated inside a transaction.
 
 > Winter Arc adds no tables: its state is derived from `DailyPlan` + `Block`;
 > the default blocks of 19 are a code constant.
@@ -143,7 +198,10 @@ Design reference: `blueprint/reference/planificacion-por-bloques.png`.
   footer saying "Se guarda automáticamente".
 - `/historial` - pick a past date and see that day read-only.
 - Winter Arc section (20) - route not specified in the plans.
-- Navigation: Hoy, Historial, and Winter Arc once 20 lands.
+- `/ahora` (25) - minimal full-screen view of the current block and the active
+  focus session.
+- Navigation: Hoy, Historial, Winter Arc (`/winter-arc`), Fitness, Plantillas,
+  and Ahora once 25 lands.
 - Installable as a PWA (17): home-screen icon, opens full screen. Offline
   shows only a "Sin conexión" screen; no offline data.
 

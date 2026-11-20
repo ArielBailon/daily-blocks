@@ -13,13 +13,14 @@ datasource db {
 }
 
 model DailyPlan {
-  id        Int      @id @default(autoincrement())
-  date      DateTime @unique @db.Date
-  closed    Boolean  @default(false)
-  startTime String   @default("06:30")
-  endTime   String   @default("23:30")
-  miscTasks String[] @default([])
-  blocks    Block[]
+  id            Int            @id @default(autoincrement())
+  date          DateTime       @unique @db.Date
+  closed        Boolean        @default(false)
+  startTime     String         @default("06:30")
+  endTime       String         @default("23:30")
+  miscTasks     String[]       @default([])
+  blocks        Block[]
+  focusSessions FocusSession[]
 }
 
 enum BlockTag {
@@ -40,6 +41,40 @@ model Block {
   tag         BlockTag?
 
   @@unique([dailyPlanId, startTime])
+}
+
+enum FocusStatus {
+  WORKING
+  PAUSED
+  BREAK
+  COMPLETED
+  ABANDONED
+}
+
+// Pomodoro session over today's blocks. All timestamps are set by the server.
+// blockIds has no FK: "Generar día" can delete blocks, so marking skips ids
+// that no longer exist. At most one active session (WORKING, PAUSED or BREAK)
+// is enforced by a partial unique index added in the migration SQL.
+model FocusSession {
+  id                Int         @id @default(autoincrement())
+  dailyPlanId       Int
+  dailyPlan         DailyPlan   @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
+  blockIds          Int[]
+  // CLASSIC | DEEP_2 | DEEP_3 | CUSTOM, validated in code
+  preset            String
+  workMinutes       Int
+  breakMinutes      Int
+  startedAt         DateTime
+  workEndsAt        DateTime
+  breakEndsAt       DateTime
+  pausedAt          DateTime?
+  pausedSeconds     Int         @default(0)
+  status            FocusStatus
+  breakSkipped      Boolean     @default(false)
+  actualWorkSeconds Int         @default(0)
+  endedAt           DateTime?
+
+  @@index([dailyPlanId])
 }
 
 // Fitness module. Single-user app: no userId. Calendar dates are @db.Date
