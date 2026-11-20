@@ -127,7 +127,7 @@
       recuperada desde el servidor al cargar. Descanso obligatorio a pantalla
       completa con "Saltar descanso" confirmado, sonido y vibración solo con la
       app abierta, y bloques auto-marcados visibles sin recargar.
-- [ ] 25. Modo "Ahora" - ruta `/ahora` con entrada en el NavBar: bloque actual
+- [x] 25. Modo "Ahora" - ruta `/ahora` con entrada en el NavBar: bloque actual
       según la hora (America/Guayaquil), sesión activa con tiempo restante
       grande, siguiente bloque y ▶ para iniciar el actual. Screen Wake Lock
       mientras hay sesión activa, si el navegador lo soporta.

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/", label: "Hoy" },
+  { href: "/ahora", label: "Ahora" },
   { href: "/historial", label: "Historial" },
   { href: "/winter-arc", label: "Winter Arc" },
   { href: "/fitness", label: "Fitness" },
@@ -15,7 +16,7 @@ export function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex justify-center gap-8 border-b border-muted px-4 py-4">
+    <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 border-b border-muted px-4 py-4">
       {links.map(({ href, label }) => {
         const active =
           href === "/" ? pathname === "/" : pathname.startsWith(href);

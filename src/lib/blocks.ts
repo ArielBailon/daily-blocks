@@ -38,3 +38,21 @@ export function isValidRange(start: string, end: string): boolean {
 export function isOnTheHour(time: string): boolean {
   return time.endsWith(":00");
 }
+
+// Block `start` covers [start, start + 30 min). `next` follows the current
+// block, or is the first later block when none is current (a gap, before the
+// first block). Blocks must be ordered by start time.
+export function findCurrentAndNext<T extends { startTime: string }>(
+  blocks: T[],
+  minutes: number
+): { current: T | null; next: T | null } {
+  const index = blocks.findIndex((b) => {
+    const start = toMinutes(b.startTime);
+    return start <= minutes && minutes < start + BLOCK_MINUTES;
+  });
+  if (index !== -1) {
+    return { current: blocks[index], next: blocks[index + 1] ?? null };
+  }
+  const next = blocks.find((b) => toMinutes(b.startTime) > minutes);
+  return { current: null, next: next ?? null };
+}

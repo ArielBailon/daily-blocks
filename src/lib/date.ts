@@ -9,6 +9,11 @@ const calendarDayFormat = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
+// The server clock as epoch ms, kept out of components so they stay pure.
+export function serverNowMs(): number {
+  return Date.now();
+}
+
 export function resolveToday(now: Date = new Date()) {
   const parts = calendarDayFormat.formatToParts(now);
   const part = (type: Intl.DateTimeFormatPartTypes) =>
@@ -30,4 +35,20 @@ export function parseDateKey(key: string): Date | null {
   const date = new Date(Date.UTC(year, month - 1, day));
   // Reject impossible dates such as 2026-02-30, which Date.UTC rolls over.
   return toDateKey(date) === key ? date : null;
+}
+
+const timeOfDayFormat = new Intl.DateTimeFormat("en-GB", {
+  timeZone: APP_TIME_ZONE,
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
+// Minutes since local midnight (0-1439) on the America/Guayaquil wall clock,
+// whatever zone the server or the browser runs in.
+export function localMinutesOfDay(now: Date = new Date()): number {
+  const parts = timeOfDayFormat.formatToParts(now);
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((p) => p.type === type)?.value);
+  return part("hour") * 60 + part("minute");
 }
