@@ -108,3 +108,42 @@ export function shouldShowAlert({
 }): boolean {
   return minutes > DISTRACTION_ALERT_MINUTES && dismissedKey !== key;
 }
+
+export type BarSegment = { key: string; label: string; percent: number };
+
+// Thinner than this is invisible in a 6 px bar.
+const MIN_SEGMENT_PERCENT = 0.5;
+const DEEP_DISTRACTION_SHARE = 0.2;
+
+// One segment per top-level category (subcategories would not be readable at
+// bar size), largest first, then idle. Percents are of the whole period.
+export function barSegments(summary: PeriodSummary): BarSegment[] {
+  const byTop = new Map<string, number>();
+  for (const c of summary.categories) {
+    const top = c.path[0] ?? "Uncategorized";
+    byTop.set(top, (byTop.get(top) ?? 0) + c.percent);
+  }
+  const segments: BarSegment[] = [...byTop]
+    .map(([label, percent]) => ({ key: `cat:${label}`, label, percent }))
+    .sort((a, b) => b.percent - a.percent);
+  if (summary.periodSeconds > 0 && summary.idleSeconds > 0) {
+    segments.push({
+      key: "idle",
+      label: "inactivo",
+      percent: (summary.idleSeconds / summary.periodSeconds) * 100,
+    });
+  }
+  return segments.filter((s) => s.percent >= MIN_SEGMENT_PERCENT);
+}
+
+export function isDeepDistracted(summary: PeriodSummary, tag: string | null): boolean {
+  return (
+    tag === "DEEP" &&
+    summary.activeSeconds > 0 &&
+    distractionSeconds(summary.categories) / summary.activeSeconds > DEEP_DISTRACTION_SHARE
+  );
+}
+
+export function formatAppMinutes(seconds: number): string {
+  return seconds < 30 ? "<1 min" : `${Math.round(seconds / 60)} min`;
+}

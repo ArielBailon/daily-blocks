@@ -5,6 +5,8 @@ import { isOnTheHour } from "@/lib/blocks";
 import { BLOCK_TAG_LABELS } from "@/lib/block-tags";
 import { HistoryDatePicker } from "@/components/historial/HistoryDatePicker";
 import { FocusCard } from "@/components/historial/FocusCard";
+import { BlockActivityProvider } from "@/components/activitywatch/BlockActivityProvider";
+import { BlockActivity } from "@/components/activitywatch/BlockActivity";
 import { loadFocusSessionsByDay } from "@/lib/focus/load";
 import { summarizeFocus } from "@/lib/focus/metrics";
 
@@ -101,16 +103,21 @@ export default async function HistorialPage({
                       Este día no tiene bloques.
                     </p>
                   ) : (
+                    <BlockActivityProvider
+                      dateKey={toDateKey(date)}
+                      startTimes={plan.blocks.map((b) => b.startTime)}
+                    >
                     <ol>
                       {plan.blocks.map((block) => (
                         <li
                           key={block.id}
-                          className={`flex border-b border-muted last:border-b-0 ${
+                          className={`border-b border-muted last:border-b-0 ${
                             isOnTheHour(block.startTime)
                               ? "bg-foreground/[0.025]"
                               : ""
                           }`}
                         >
+                          <div className="flex">
                           <div className="flex w-20 shrink-0 flex-col items-end justify-center border-r border-muted px-3 py-2">
                             <span
                               className={`text-sm tabular-nums ${
@@ -146,9 +153,15 @@ export default async function HistorialPage({
                               className="h-4 w-4 accent-accent"
                             />
                           </span>
+                          </div>
+                          <BlockActivity
+                            startTime={block.startTime}
+                            tag={block.tag}
+                          />
                         </li>
                       ))}
                     </ol>
+                    </BlockActivityProvider>
                   )}
                 </div>
               </div>

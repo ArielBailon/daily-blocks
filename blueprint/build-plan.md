@@ -155,7 +155,7 @@
       configurar CORS. Solo escritorio: en pantallas angostas (celular) no se
       renderiza nada y la versión móvil queda en espera; sin respuesta, solo un
       aviso discreto "No disponible" con link a la guía.
-- [ ] 28. Plan vs. realidad en Hoy e Historial - cada bloque pasado o en curso
+- [x] 28. Plan vs. realidad en Hoy e Historial - cada bloque pasado o en curso
       muestra una barra apilada compacta por categoría más el tiempo inactivo
       y, al expandirlo, el top 3 de apps con sus minutos; los bloques futuros
       no muestran nada. Historial hace lo mismo para la fecha elegida. Un

@@ -8,6 +8,7 @@ import { DEFAULT_END, DEFAULT_START } from "@/lib/default-blocks";
 import { listPresets } from "@/lib/presets";
 import { FocusProvider } from "@/components/focus/FocusProvider";
 import { FocusBar } from "@/components/focus/FocusBar";
+import { BlockActivityProvider } from "@/components/activitywatch/BlockActivityProvider";
 
 export const dynamic = "force-dynamic";
 
@@ -75,6 +76,10 @@ export default async function HoyPage({
                   día.
                 </p>
               ) : (
+                <BlockActivityProvider
+                  dateKey={dateKey}
+                  startTimes={isFuture ? [] : blocks.map((b) => b.startTime)}
+                >
                 <ol>
                   {blocks.map((block) => (
                     <BlockRow
@@ -90,6 +95,7 @@ export default async function HoyPage({
                     />
                   ))}
                 </ol>
+                </BlockActivityProvider>
               )}
             </div>
           </div>
