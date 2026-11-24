@@ -17,6 +17,9 @@ import { PresetPicker } from "@/components/focus/PresetPicker";
 import { useFocus } from "@/components/focus/FocusProvider";
 import { useRemainingMs } from "@/components/focus/useRemainingMs";
 import { useWakeLock } from "./useWakeLock";
+import { DistractionBanner } from "@/components/activitywatch/DistractionBanner";
+import { LiveActivity } from "@/components/activitywatch/LiveActivity";
+import { useDistraction } from "@/components/activitywatch/useDistraction";
 
 export type AhoraBlock = {
   id: number;
@@ -34,7 +37,13 @@ const PHASE_LABEL = {
   BREAK: "Descanso",
 } as const;
 
-function SessionPanel({ session }: { session: FocusSessionDto }) {
+function SessionPanel({
+  session,
+  distractionMinutes,
+}: {
+  session: FocusSessionDto;
+  distractionMinutes: number | null;
+}) {
   const { offsetMs } = useFocus();
   const remaining = useRemainingMs(session, offsetMs);
   const phase =
@@ -60,6 +69,11 @@ function SessionPanel({ session }: { session: FocusSessionDto }) {
       <p className="text-sm text-foreground/60">
         Cubre {count} {count === 1 ? "bloque" : "bloques"}
       </p>
+      {session.status === "WORKING" && distractionMinutes !== null && (
+        <p className="hidden text-sm text-foreground/60 md:block">
+          Distracción en esta sesión: {distractionMinutes} min
+        </p>
+      )}
     </section>
   );
 }
@@ -77,6 +91,7 @@ export function AhoraView({
   const { loaded, session, busy, marks } = useFocus();
   const [nowMs, setNowMs] = useState(initialNowMs);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const distraction = useDistraction(dateKey);
 
   useWakeLock(session !== null);
 
@@ -128,6 +143,9 @@ export function AhoraView({
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-10 text-center">
+      {distraction.alert && (
+        <DistractionBanner alert={distraction.alert} onDismiss={distraction.dismiss} />
+      )}
       <p className="text-sm tabular-nums text-foreground/60">
         {dayChanged ? "Actualizando el día…" : fromMinutes(minutes)}
       </p>
@@ -162,7 +180,11 @@ export function AhoraView({
         )}
       </section>
 
-      {session && <SessionPanel session={session} />}
+      <LiveActivity nowMs={nowMs} />
+
+      {session && (
+        <SessionPanel session={session} distractionMinutes={distraction.sessionMinutes} />
+      )}
 
       <button
         type="button"

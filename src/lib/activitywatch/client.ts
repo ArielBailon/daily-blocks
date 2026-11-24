@@ -1,5 +1,6 @@
 import { categorizeRules, type CategorizeRule } from "./categories";
 import { AW_TIMEOUT_MS, AW_URL, STALE_WINDOW_MS } from "./config";
+import { appStreakStart } from "./live";
 import { buildQuery, findBuckets, type AwBuckets } from "./query";
 
 export type AwConnection = { buckets: AwBuckets; rules: CategorizeRule[] };
@@ -55,14 +56,20 @@ async function lastEvent(bucket: string): Promise<Record<string, unknown> | null
   return Array.isArray(events) && isRecord(events[0]) ? events[0] : null;
 }
 
+// Enough recent window events to join the current app's tab and title changes.
+const STREAK_EVENTS = 50;
+
 export async function readCurrent(
   connection: AwConnection,
   nowMs: number
 ): Promise<CurrentActivity | null> {
-  const [window, afk] = await Promise.all([
-    lastEvent(connection.buckets.window),
+  const [events, afk] = await Promise.all([
+    getJson(
+      `/api/0/buckets/${encodeURIComponent(connection.buckets.window)}/events?limit=${STREAK_EVENTS}`
+    ),
     lastEvent(connection.buckets.afk),
   ]);
+  const window = Array.isArray(events) && isRecord(events[0]) ? events[0] : null;
   if (!window || !isRecord(window.data)) return null;
   const { timestamp, duration, data } = window;
   if (typeof timestamp !== "string" || typeof duration !== "number") return null;
@@ -70,7 +77,7 @@ export async function readCurrent(
   return {
     app: typeof data.app === "string" ? data.app : "",
     title: typeof data.title === "string" ? data.title : "",
-    since: timestamp,
+    since: appStreakStart(events) ?? timestamp,
     afk: isRecord(afk?.data) && afk.data.status === "afk",
   };
 }

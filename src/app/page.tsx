@@ -9,6 +9,7 @@ import { listPresets } from "@/lib/presets";
 import { FocusProvider } from "@/components/focus/FocusProvider";
 import { FocusBar } from "@/components/focus/FocusBar";
 import { BlockActivityProvider } from "@/components/activitywatch/BlockActivityProvider";
+import { DistractionAlert } from "@/components/activitywatch/DistractionAlert";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,8 @@ export default async function HoyPage({
     <main className="flex flex-1 flex-col px-4 py-10 sm:px-6">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         <h1 className="text-3xl font-bold">Daily Blocks</h1>
+
+        <DistractionAlert dateKey={dateKey} />
 
         <GenerateDayForm
           key={dateKey}

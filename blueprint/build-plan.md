@@ -162,7 +162,7 @@
       bloque DEEP con más del 20% del tiempo activo en categorías de
       distracción resalta su barra de forma sutil. Sin conexión no se
       renderiza nada.
-- [ ] 29. En vivo en Ahora y alerta de distracción - `/ahora` muestra la app
+- [x] 29. En vivo en Ahora y alerta de distracción - `/ahora` muestra la app
       actual, el tiempo que llevo en ella, si estoy activo o inactivo y el
       título de la ventana solo con el toggle "mostrar título" (preferencia en
       `localStorage`). Con una sesión de foco en WORKING, los minutos de
