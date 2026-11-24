@@ -52,3 +52,39 @@ export function localMinutesOfDay(now: Date = new Date()): number {
     Number(parts.find((p) => p.type === type)?.value);
   return part("hour") * 60 + part("minute");
 }
+
+const wallClockFormat = new Intl.DateTimeFormat("en-US", {
+  timeZone: APP_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+
+// The America/Guayaquil wall clock at `instantMs`, read as if it were UTC.
+function wallClockAsUtcMs(instantMs: number): number {
+  const parts = wallClockFormat.formatToParts(new Date(instantMs));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((p) => p.type === type)?.value);
+  return Date.UTC(
+    part("year"),
+    part("month") - 1,
+    part("day"),
+    part("hour"),
+    part("minute"),
+    part("second")
+  );
+}
+
+// The instant when the America/Guayaquil wall clock reads `minutes` after
+// midnight of `dateKey`, whatever zone the browser runs in. Minutes past 1439
+// roll into the next day.
+export function zonedTimeToUtc(dateKey: string, minutes: number): Date {
+  const day = parseDateKey(dateKey);
+  if (!day) throw new RangeError(`Invalid date key: ${dateKey}`);
+  const wallMs = day.getTime() + minutes * 60_000;
+  return new Date(wallMs - (wallClockAsUtcMs(wallMs) - wallMs));
+}

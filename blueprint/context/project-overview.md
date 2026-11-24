@@ -1,6 +1,6 @@
 # daily-blocks - Project Overview
 
-<!-- blueprint:source-hash 1194ec684c17074f2b3929bc148d9e3ddbd2ce9dcfee53c8e75d6b047c5eb20f -->
+<!-- blueprint:source-hash 5a8aefec4d6837efd44bef60310881b30697274a82681bc6cb8955c34a266273 -->
 
 > A personal day planner that splits the day into 30-minute blocks, each with
 > a free-text activity, an optional tag and a completion checkbox, plus a small
@@ -20,13 +20,15 @@ deployed URL; mobile is the primary surface for the daily view.
 
 ## Features
 
-Features 1-22 are built; 23-26 are planned. 1-10 were the original
+Features 1-26 are built; 27-29 are planned. 1-10 were the original
 template-based checklist; 11-16 moved the app to the block planner and retired
 the template model. The headline is **"Hoy" as block planning (13)**. 17 made
 the app installable. 18-21 add the **Winter Arc**: a 90-day challenge measured
 only from block tags and checks, with no check-in form. 22 adds Fitness. 23-26
 add the **Pomodoro**: focus sessions that live inside the blocks and mark them
-done automatically.
+done automatically. 27-29 add **ActivityWatch**: what really happened on the PC
+during each block, read by the browser straight from the local ActivityWatch
+server and never stored by daily-blocks.
 
 1. **Layout and navigation** - app shell with navigation.
 2. **Prisma data schema** - original models on Postgres.
@@ -115,6 +117,44 @@ done automatically.
     completed/abandoned sessions and skipped breaks; `/winter-arc` shows focus
     minutes per day and the current week total, without changing the arc rules;
     `GET /api/days` includes each day's sessions.
+27. **Cliente de ActivityWatch y estado de conexion** - client-side only: the
+    browser on the PC calls ActivityWatch (Python `aw-server` v0.13.2 at
+    `http://localhost:5600`); Vercel cannot reach it. No schema, migration,
+    endpoint or local script; nothing from ActivityWatch is persisted.
+    `src/lib/activitywatch/config.ts`: `AW_URL` (`NEXT_PUBLIC_AW_URL`, default
+    `http://localhost:5600`), `DISTRACTION_CATEGORIES` as full category paths
+    (`Media > Games | Video | Social Media | Music`; `Work > Video` also
+    exists, so names alone are ambiguous), `DISTRACTION_ALERT_MINUTES = 5`.
+    Thin `fetch` client with a ~2 s timeout: `GET /api/0/info`,
+    `GET /api/0/buckets/` (found by prefix `aw-watcher-window_`,
+    `aw-watcher-afk_`, optional `aw-watcher-web-`, since names end in the
+    hostname), `GET /api/0/buckets/{id}/events?limit=1`, and
+    `POST /api/0/query/` with one timeperiod per block in a single call
+    (window events intersected with `not-afk`, then `categorize`). Categories
+    come from `GET /api/0/settings` (`classes`), falling back to ActivityWatch's
+    defaults in code. Idle time is block length minus active time, because
+    query events are not clipped to the period. Pure logic with Vitest tests.
+    Connection state `connected | unavailable | checking` from a light
+    provider like `FocusProvider`; one "No disponible" state (off and CORS look
+    the same) with a link to the guide. Polling: current activity every 10 s,
+    block summaries every 60 s, paused while `document.hidden`; finished blocks
+    cached in memory. `docs/activitywatch.md` explains the `cors_origins` setup.
+    Desktop only for now: narrow (phone) viewports render nothing, hidden with
+    CSS breakpoints, no device detection; the mobile version is on hold.
+28. **Plan vs. realidad en Hoy e Historial** - past and current blocks show a
+    compact stacked bar by category plus idle time, and the top 3 apps when
+    expanded; future blocks show nothing. Historial does the same for the
+    chosen date. A DEEP block with more than 20% of its active time in
+    `DISTRACTION_CATEGORIES` gets a subtle highlight. Nothing renders unless
+    the state is `connected`.
+29. **En vivo en Ahora y alerta de distraccion** - `/ahora` shows the current
+    app, time in it, active/idle, and the window title only behind a "mostrar
+    titulo" toggle saved in `localStorage`. During a WORKING focus session,
+    distraction minutes since `startedAt`. An in-app, dismissible banner in Hoy
+    and Ahora when the active session or the current DEEP block passes
+    `DISTRACTION_ALERT_MINUTES`; it returns only after crossing the threshold
+    again. No push, Notification API or service worker changes; `FocusSession`,
+    the Pomodoro and the Winter Arc engine stay untouched.
 
 ## Data model
 
@@ -162,6 +202,10 @@ done automatically.
 Added in 23. At most one session is WORKING, PAUSED or BREAK at a time,
 validated inside a transaction.
 
+> ActivityWatch (27-29) adds no tables: its data stays in ActivityWatch on the
+> PC. Window titles and URLs never leave the browser (not sent to the
+> daily-blocks API, not logged, not persisted).
+>
 > Winter Arc adds no tables: its state is derived from `DailyPlan` + `Block`;
 > the default blocks of 19 are a code constant.
 >
@@ -199,7 +243,11 @@ Design reference: `blueprint/reference/planificacion-por-bloques.png`.
 - `/historial` - pick a past date and see that day read-only.
 - Winter Arc section (20) - route not specified in the plans.
 - `/ahora` (25) - minimal full-screen view of the current block and the active
-  focus session.
+  focus session; with ActivityWatch connected (29), the current app and the
+  distraction minutes of the session.
+- ActivityWatch (27-29) is desktop only for now: invisible on narrow (phone)
+  viewports, and when ActivityWatch does not answer only a discreet "No
+  disponible" notice with a link to the guide; no noisy placeholders.
 - Navigation: Hoy, Historial, Winter Arc (`/winter-arc`), Fitness, Plantillas,
   and Ahora once 25 lands.
 - Installable as a PWA (17): home-screen icon, opens full screen. Offline
@@ -210,7 +258,11 @@ Design reference: `blueprint/reference/planificacion-por-bloques.png`.
 - **Host:** Vercel.
 - **Database:** Prisma Postgres, free tier, via Vercel Storage, connected with
   `DATABASE_URL`.
-- **Env vars:** `DATABASE_URL`.
+- **Env vars:** `DATABASE_URL`; optional `NEXT_PUBLIC_AW_URL` (27, defaults to
+  `http://localhost:5600`).
+- **ActivityWatch (27-29):** runs only on the PC; the user adds
+  `https://daily-blocks-mu.vercel.app` and `http://localhost:3000` to
+  `cors_origins` in ActivityWatch's config by hand, per `docs/activitywatch.md`.
 - **Build:** `npm run vercel-build` (runs `prisma migrate deploy`, then
   `next build`), per AGENTS.md.
 - **PWA:** installation requires HTTPS, which the Vercel URL provides.

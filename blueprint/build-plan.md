@@ -135,3 +135,39 @@
       sesiones completadas/abandonadas y descansos saltados; en `/winter-arc`,
       minutos de foco por día y total de la semana actual; `GET /api/days`
       incluye las sesiones de cada día. Sin cambiar las reglas del arco.
+- [x] 27. Cliente de ActivityWatch y estado de conexión - integración 100% en
+      el navegador con ActivityWatch (aw-server en Python, v0.13, en
+      `http://localhost:5600`): sin cambios en el backend, sin tablas ni
+      endpoints nuevos y sin guardar nada de ActivityWatch en la base de datos.
+      Configuración en `src/lib/activitywatch/config.ts` (`AW_URL` desde
+      `NEXT_PUBLIC_AW_URL`, categorías de distracción `Media > Games`,
+      `Media > Video`, `Media > Social Media` y `Media > Music` por ruta
+      completa, alerta a los 5 minutos). Cliente con `fetch` y timeout de 2 s:
+      `/api/0/info`, buckets por prefijo (`aw-watcher-window_`,
+      `aw-watcher-afk_`, `aw-watcher-web-` opcional), último evento y
+      `POST /api/0/query/` con un periodo por bloque, cruzando ventana con
+      `not-afk` y aplicando las categorías de `/api/0/settings` (o un respaldo
+      en código). Lógica pura con tests (periodo ISO de un bloque, agregado por
+      categoría y app con % e inactivo, minutos de distracción, decisión de
+      alerta). Estado `connected | unavailable | checking` con polling de 10 s
+      (actividad actual) y 60 s (resúmenes), pausado con la pestaña oculta y
+      bloques terminados en caché de memoria. Guía `docs/activitywatch.md` para
+      configurar CORS. Solo escritorio: en pantallas angostas (celular) no se
+      renderiza nada y la versión móvil queda en espera; sin respuesta, solo un
+      aviso discreto "No disponible" con link a la guía.
+- [ ] 28. Plan vs. realidad en Hoy e Historial - cada bloque pasado o en curso
+      muestra una barra apilada compacta por categoría más el tiempo inactivo
+      y, al expandirlo, el top 3 de apps con sus minutos; los bloques futuros
+      no muestran nada. Historial hace lo mismo para la fecha elegida. Un
+      bloque DEEP con más del 20% del tiempo activo en categorías de
+      distracción resalta su barra de forma sutil. Sin conexión no se
+      renderiza nada.
+- [ ] 29. En vivo en Ahora y alerta de distracción - `/ahora` muestra la app
+      actual, el tiempo que llevo en ella, si estoy activo o inactivo y el
+      título de la ventana solo con el toggle "mostrar título" (preferencia en
+      `localStorage`). Con una sesión de foco en WORKING, los minutos de
+      distracción desde su inicio. Si la sesión activa o el bloque DEEP en
+      curso pasa de 5 minutos de distracción, un banner descartable en Hoy y
+      en Ahora que no vuelve hasta cruzar de nuevo el umbral. Sin push,
+      Notification API ni cambios al service worker; sin tocar `FocusSession`,
+      el Pomodoro ni el motor del Winter Arc.

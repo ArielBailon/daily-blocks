@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ActivityWatchStatus } from "@/components/activitywatch/ActivityWatchStatus";
 
 const links = [
   { href: "/", label: "Hoy" },
@@ -34,6 +35,7 @@ export function NavBar() {
           </Link>
         );
       })}
+      <ActivityWatchStatus />
     </nav>
   );
 }

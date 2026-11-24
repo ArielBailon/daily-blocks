@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Lora } from "next/font/google";
 import { NavBar } from "@/components/layout/NavBar";
+import { ActivityWatchProvider } from "@/components/activitywatch/ActivityWatchProvider";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -29,8 +30,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${lora.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <NavBar />
-        {children}
+        <ActivityWatchProvider>
+          <NavBar />
+          {children}
+        </ActivityWatchProvider>
         <ServiceWorkerRegister />
       </body>
     </html>
