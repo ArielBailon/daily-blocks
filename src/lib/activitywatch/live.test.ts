@@ -1,54 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { appStreakStart, pickAlert } from "./live";
-
-const event = (start: string, seconds: number, app: string) => ({
-  timestamp: start,
-  duration: seconds,
-  data: { app, title: "t" },
-});
-
-describe("appStreakStart", () => {
-  it("is the start of a single event", () => {
-    expect(appStreakStart([event("2026-11-24T15:00:00Z", 30, "chrome.exe")])).toBe(
-      "2026-11-24T15:00:00.000Z"
-    );
-  });
-
-  it("joins consecutive events of the same app", () => {
-    expect(
-      appStreakStart([
-        event("2026-11-24T15:10:00Z", 60, "chrome.exe"),
-        event("2026-11-24T15:05:00Z", 280, "chrome.exe"),
-        event("2026-11-24T15:00:00Z", 300, "chrome.exe"),
-      ])
-    ).toBe("2026-11-24T15:00:00.000Z");
-  });
-
-  it("stops at a different app", () => {
-    expect(
-      appStreakStart([
-        event("2026-11-24T15:10:00Z", 60, "chrome.exe"),
-        event("2026-11-24T15:05:00Z", 300, "Code.exe"),
-        event("2026-11-24T15:00:00Z", 300, "chrome.exe"),
-      ])
-    ).toBe("2026-11-24T15:10:00.000Z");
-  });
-
-  it("stops at a gap over 60 s", () => {
-    expect(
-      appStreakStart([
-        event("2026-11-24T15:10:00Z", 60, "chrome.exe"),
-        event("2026-11-24T15:05:00Z", 200, "chrome.exe"),
-      ])
-    ).toBe("2026-11-24T15:10:00.000Z");
-  });
-
-  it("is null for an empty or malformed list", () => {
-    expect(appStreakStart([])).toBeNull();
-    expect(appStreakStart(null)).toBeNull();
-    expect(appStreakStart([{ timestamp: "x", duration: 1, data: { app: "a" } }])).toBeNull();
-  });
-});
+import { pickAlert } from "./live";
 
 describe("pickAlert", () => {
   const none = new Set<string>();

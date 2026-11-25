@@ -3,12 +3,11 @@ import { redirect } from "next/navigation";
 import { parseDateKey, resolveToday, toDateKey } from "@/lib/date";
 import { GenerateDayForm } from "@/components/hoy/GenerateDayForm";
 import { BlockRow } from "@/components/hoy/BlockRow";
-import { MiscTasksPanel } from "@/components/hoy/MiscTasksPanel";
 import { DEFAULT_END, DEFAULT_START } from "@/lib/default-blocks";
 import { listPresets } from "@/lib/presets";
 import { FocusProvider } from "@/components/focus/FocusProvider";
 import { FocusBar } from "@/components/focus/FocusBar";
-import { BlockActivityProvider } from "@/components/activitywatch/BlockActivityProvider";
+import { PcTimePanel } from "@/components/activitywatch/PcTimePanel";
 import { DistractionAlert } from "@/components/activitywatch/DistractionAlert";
 
 export const dynamic = "force-dynamic";
@@ -64,12 +63,8 @@ export default async function HoyPage({
         />
 
         <div className="flex flex-col gap-6 md:flex-row-reverse md:items-start">
-          <div className="md:w-72 md:shrink-0">
-            <MiscTasksPanel
-              key={dateKey}
-              dateKey={dateKey}
-              initialTasks={plan?.miscTasks ?? []}
-            />
+          <div className="flex flex-col gap-6 md:w-72 md:shrink-0 md:empty:hidden">
+            <PcTimePanel dateKey={dateKey} />
           </div>
           <div className="min-w-0 flex-1">
             <div className="overflow-hidden rounded-xl border border-muted bg-surface">
@@ -79,10 +74,6 @@ export default async function HoyPage({
                   día.
                 </p>
               ) : (
-                <BlockActivityProvider
-                  dateKey={dateKey}
-                  startTimes={isFuture ? [] : blocks.map((b) => b.startTime)}
-                >
                 <ol>
                   {blocks.map((block) => (
                     <BlockRow
@@ -98,7 +89,6 @@ export default async function HoyPage({
                     />
                   ))}
                 </ol>
-                </BlockActivityProvider>
               )}
             </div>
           </div>

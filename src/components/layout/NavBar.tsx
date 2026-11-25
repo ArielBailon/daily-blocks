@@ -6,7 +6,6 @@ import { ActivityWatchStatus } from "@/components/activitywatch/ActivityWatchSta
 
 const links = [
   { href: "/", label: "Hoy" },
-  { href: "/ahora", label: "Ahora" },
   { href: "/historial", label: "Historial" },
   { href: "/winter-arc", label: "Winter Arc" },
   { href: "/fitness", label: "Fitness" },

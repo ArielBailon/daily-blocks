@@ -1,4 +1,5 @@
 import { DISTRACTION_ALERT_MINUTES, DISTRACTION_CATEGORIES } from "./config";
+import { groupTitles, type DetailTime } from "./titles";
 
 export type CategoryTime = { path: string[]; seconds: number; percent: number };
 export type AppTime = { app: string; seconds: number };
@@ -9,9 +10,9 @@ export type PeriodSummary = {
   idleSeconds: number;
   categories: CategoryTime[];
   apps: AppTime[];
+  // What was open in each app (site, project…), longest first.
+  appDetails: Map<string, DetailTime[]>;
 };
-
-const TOP_APPS = 3;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -47,6 +48,11 @@ const readCategory = (data: Record<string, unknown>) => {
 const readApp = (data: Record<string, unknown>) =>
   typeof data.app === "string" ? data.app : null;
 
+const readAppTitle = (data: Record<string, unknown>) =>
+  typeof data.app === "string"
+    ? { app: data.app, title: typeof data.title === "string" ? data.title : "" }
+    : null;
+
 // One query result (`{ apps, cats }`) for a period of `periodSeconds`.
 // ActivityWatch does not clip events to the period, so an active total longer
 // than the period is scaled down. Idle is whatever the period has left (AFK,
@@ -55,6 +61,7 @@ export function summarizePeriod(result: unknown, periodSeconds: number): PeriodS
   const data = isRecord(result) ? result : {};
   const cats = readDurations(data.cats, readCategory);
   const apps = readDurations(data.apps, readApp);
+  const titles = readDurations(data.titles, readAppTitle);
   const rawActive = cats.reduce((sum, c) => sum + c.seconds, 0);
   const scale = rawActive > periodSeconds ? periodSeconds / rawActive : 1;
   const activeSeconds = rawActive * scale;
@@ -75,8 +82,10 @@ export function summarizePeriod(result: unknown, periodSeconds: number): PeriodS
       .sort(bySeconds),
     apps: apps
       .map(({ key, seconds }) => ({ app: key, seconds: seconds * scale }))
-      .sort(bySeconds)
-      .slice(0, TOP_APPS),
+      .sort(bySeconds),
+    appDetails: groupTitles(
+      titles.map(({ key, seconds }) => ({ ...key, seconds: seconds * scale }))
+    ),
   };
 }
 
@@ -107,43 +116,4 @@ export function shouldShowAlert({
   dismissedKey: string | null;
 }): boolean {
   return minutes > DISTRACTION_ALERT_MINUTES && dismissedKey !== key;
-}
-
-export type BarSegment = { key: string; label: string; percent: number };
-
-// Thinner than this is invisible in a 6 px bar.
-const MIN_SEGMENT_PERCENT = 0.5;
-const DEEP_DISTRACTION_SHARE = 0.2;
-
-// One segment per top-level category (subcategories would not be readable at
-// bar size), largest first, then idle. Percents are of the whole period.
-export function barSegments(summary: PeriodSummary): BarSegment[] {
-  const byTop = new Map<string, number>();
-  for (const c of summary.categories) {
-    const top = c.path[0] ?? "Uncategorized";
-    byTop.set(top, (byTop.get(top) ?? 0) + c.percent);
-  }
-  const segments: BarSegment[] = [...byTop]
-    .map(([label, percent]) => ({ key: `cat:${label}`, label, percent }))
-    .sort((a, b) => b.percent - a.percent);
-  if (summary.periodSeconds > 0 && summary.idleSeconds > 0) {
-    segments.push({
-      key: "idle",
-      label: "inactivo",
-      percent: (summary.idleSeconds / summary.periodSeconds) * 100,
-    });
-  }
-  return segments.filter((s) => s.percent >= MIN_SEGMENT_PERCENT);
-}
-
-export function isDeepDistracted(summary: PeriodSummary, tag: string | null): boolean {
-  return (
-    tag === "DEEP" &&
-    summary.activeSeconds > 0 &&
-    distractionSeconds(summary.categories) / summary.activeSeconds > DEEP_DISTRACTION_SHARE
-  );
-}
-
-export function formatAppMinutes(seconds: number): string {
-  return seconds < 30 ? "<1 min" : `${Math.round(seconds / 60)} min`;
 }

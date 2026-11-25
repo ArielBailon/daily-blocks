@@ -5,7 +5,6 @@ import { isOnTheHour } from "@/lib/blocks";
 import { BLOCK_TAGS, BLOCK_TAG_LABELS, type BlockTag } from "@/lib/block-tags";
 import { useFocus } from "@/components/focus/FocusProvider";
 import { PresetPicker } from "@/components/focus/PresetPicker";
-import { BlockActivity } from "@/components/activitywatch/BlockActivity";
 
 const SAVE_DELAY_MS = 600;
 const OPTION_CLASS = "bg-surface text-left text-sm text-foreground";
@@ -247,7 +246,6 @@ export function BlockRow({
           />
         </label>
       </div>
-      <BlockActivity startTime={startTime} tag={tag} />
       {pickerOpen && (
         <PresetPicker blockId={id} onClose={() => setPickerOpen(false)} />
       )}

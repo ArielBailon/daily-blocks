@@ -13,11 +13,10 @@ import {
 import {
   connect,
   queryPeriods,
-  readCurrent,
+  ping,
   type AwConnection,
-  type CurrentActivity,
 } from "@/lib/activitywatch/client";
-import { CURRENT_POLL_MS, UNAVAILABLE_RETRY_MS } from "@/lib/activitywatch/config";
+import { STATUS_POLL_MS, UNAVAILABLE_RETRY_MS } from "@/lib/activitywatch/config";
 import { periodSeconds } from "@/lib/activitywatch/period";
 import { summarizePeriod, type PeriodSummary } from "@/lib/activitywatch/summary";
 
@@ -25,7 +24,6 @@ export type AwStatus = "checking" | "connected" | "unavailable";
 
 type ActivityWatchValue = {
   status: AwStatus;
-  current: CurrentActivity | null;
   // Null when ActivityWatch cannot answer; the status then turns unavailable.
   query: (periods: string[]) => Promise<PeriodSummary[] | null>;
 };
@@ -45,12 +43,10 @@ const DESKTOP_QUERY = "(min-width: 768px)";
 
 export function ActivityWatchProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AwStatus>("checking");
-  const [current, setCurrent] = useState<CurrentActivity | null>(null);
   const connection = useRef<AwConnection | null>(null);
 
   const markUnavailable = useCallback(() => {
     connection.current = null;
-    setCurrent(null);
     setStatus("unavailable");
   }, []);
 
@@ -71,12 +67,11 @@ export function ActivityWatchProvider({ children }: { children: ReactNode }) {
       if (cancelled || running || !active()) return;
       running = true;
       try {
-        connection.current ??= await connect();
-        const next = await readCurrent(connection.current, Date.now());
+        if (connection.current) await ping();
+        else connection.current = await connect();
         if (cancelled) return;
-        setCurrent(next);
         setStatus("connected");
-        timer = setTimeout(tick, CURRENT_POLL_MS);
+        timer = setTimeout(tick, STATUS_POLL_MS);
       } catch {
         if (cancelled) return;
         markUnavailable();
@@ -120,7 +115,7 @@ export function ActivityWatchProvider({ children }: { children: ReactNode }) {
     [markUnavailable]
   );
 
-  const value = useMemo(() => ({ status, current, query }), [status, current, query]);
+  const value = useMemo(() => ({ status, query }), [status, query]);
 
   return (
     <ActivityWatchContext.Provider value={value}>{children}</ActivityWatchContext.Provider>

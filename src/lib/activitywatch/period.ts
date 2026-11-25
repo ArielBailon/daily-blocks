@@ -22,23 +22,6 @@ export function blockPeriod(dateKey: string, startTime: string): string {
   return periodOf(startMs, endMs);
 }
 
-// Start times of the blocks that need a query now: started blocks, except
-// finished ones already cached (a finished block can no longer change).
-// Future blocks are never queried.
-export function periodsToFetch(
-  dateKey: string,
-  startTimes: string[],
-  nowMs: number,
-  cache: ReadonlyMap<string, unknown>
-): string[] {
-  return startTimes.filter((startTime) => {
-    const { startMs, endMs } = blockBounds(dateKey, startTime);
-    if (startMs > nowMs) return false;
-    if (endMs <= nowMs && cache.has(blockPeriod(dateKey, startTime))) return false;
-    return true;
-  });
-}
-
 export function periodSeconds(period: string): number {
   const [start, end] = period.split("/").map(Date.parse);
   return Math.max(0, (end - start) / 1000);

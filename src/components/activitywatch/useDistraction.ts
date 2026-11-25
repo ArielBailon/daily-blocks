@@ -10,7 +10,7 @@ import { distractionMinutes } from "@/lib/activitywatch/summary";
 import { useFocus } from "@/components/focus/FocusProvider";
 import { useActivityWatch } from "./ActivityWatchProvider";
 
-// Dismissed banners stay dismissed across Hoy and Ahora for the tab's life.
+// Dismissed banners stay dismissed for the tab's life.
 const dismissedKeys = new Set<string>();
 
 type Measured = {

@@ -1,17 +1,8 @@
 import { categorizeRules, type CategorizeRule } from "./categories";
-import { AW_TIMEOUT_MS, AW_URL, STALE_WINDOW_MS } from "./config";
-import { appStreakStart } from "./live";
+import { AW_TIMEOUT_MS, AW_URL } from "./config";
 import { buildQuery, findBuckets, type AwBuckets } from "./query";
 
 export type AwConnection = { buckets: AwBuckets; rules: CategorizeRule[] };
-
-// Stays in browser memory only: the title is shown in Ahora behind a toggle.
-export type CurrentActivity = {
-  app: string;
-  title: string;
-  since: string;
-  afk: boolean;
-};
 
 // A failed fetch cannot tell "ActivityWatch is off" from "blocked by CORS";
 // callers treat every error the same way.
@@ -49,37 +40,9 @@ export async function connect(): Promise<AwConnection> {
   return { buckets, rules: categorizeRules(classes) };
 }
 
-async function lastEvent(bucket: string): Promise<Record<string, unknown> | null> {
-  const events = await getJson(
-    `/api/0/buckets/${encodeURIComponent(bucket)}/events?limit=1`
-  );
-  return Array.isArray(events) && isRecord(events[0]) ? events[0] : null;
-}
-
-// Enough recent window events to join the current app's tab and title changes.
-const STREAK_EVENTS = 50;
-
-export async function readCurrent(
-  connection: AwConnection,
-  nowMs: number
-): Promise<CurrentActivity | null> {
-  const [events, afk] = await Promise.all([
-    getJson(
-      `/api/0/buckets/${encodeURIComponent(connection.buckets.window)}/events?limit=${STREAK_EVENTS}`
-    ),
-    lastEvent(connection.buckets.afk),
-  ]);
-  const window = Array.isArray(events) && isRecord(events[0]) ? events[0] : null;
-  if (!window || !isRecord(window.data)) return null;
-  const { timestamp, duration, data } = window;
-  if (typeof timestamp !== "string" || typeof duration !== "number") return null;
-  if (nowMs - (Date.parse(timestamp) + duration * 1000) > STALE_WINDOW_MS) return null;
-  return {
-    app: typeof data.app === "string" ? data.app : "",
-    title: typeof data.title === "string" ? data.title : "",
-    since: appStreakStart(events) ?? timestamp,
-    afk: isRecord(afk?.data) && afk.data.status === "afk",
-  };
+// Cheap liveness check while connected.
+export async function ping(): Promise<void> {
+  await getJson("/api/0/info");
 }
 
 // One raw result per period, in the same order.

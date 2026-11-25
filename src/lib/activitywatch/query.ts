@@ -48,8 +48,9 @@ export function findBuckets(buckets: unknown, hostname: string): AwBuckets | nul
 }
 
 // Active time only: window events intersected with not-afk periods, then
-// categorized. Merging by key keeps just that key, so no title or URL comes
-// back. ActivityWatch rejects `//` comments, so none are added.
+// categorized. Window titles come back only merged per app and title, to show
+// what was open in each app; they stay in browser memory. No URL is read.
+// ActivityWatch rejects `//` comments, so none are added.
 export function buildQuery(buckets: AwBuckets, rules: CategorizeRule[]): string[] {
   return [
     `window = query_bucket(${JSON.stringify(buckets.window)});`,
@@ -57,6 +58,6 @@ export function buildQuery(buckets: AwBuckets, rules: CategorizeRule[]): string[
     `notafk = filter_keyvals(afk, "status", ["not-afk"]);`,
     `active = filter_period_intersect(window, notafk);`,
     `active = categorize(active, ${JSON.stringify(rules)});`,
-    `RETURN = {"apps": sort_by_duration(merge_events_by_keys(active, ["app"])), "cats": sort_by_duration(merge_events_by_keys(active, ["$category"]))};`,
+    `RETURN = {"apps": sort_by_duration(merge_events_by_keys(active, ["app"])), "cats": sort_by_duration(merge_events_by_keys(active, ["$category"])), "titles": sort_by_duration(merge_events_by_keys(active, ["app", "title"]))};`,
   ];
 }
